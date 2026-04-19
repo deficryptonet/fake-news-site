@@ -80,6 +80,7 @@
   }
   .hero-bg {
     position: absolute; inset:0;
+    pointer-events: none;
     background: radial-gradient(ellipse at 30% 50%, rgba(230,57,70,0.12) 0%, transparent 60%),
                 radial-gradient(ellipse at 70% 20%, rgba(255,214,10,0.08) 0%, transparent 50%),
                 radial-gradient(ellipse at 80% 80%, rgba(46,196,182,0.06) 0%, transparent 40%);
@@ -167,6 +168,7 @@
     font-size: 0.9rem;
     transition: all .2s;
     text-align: left;
+    color: var(--blanc);
   }
   .jauge-option:hover { border-color: var(--jaune); background: rgba(255,214,10,0.08); }
   .jauge-option.correct { border-color: var(--vert); background: rgba(46,196,182,0.15); }
