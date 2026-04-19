@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Détective Info — Enquête sur les Fake News</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@300;400;500;600;700&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --noir: #0a0a0f;
+    --rouge: #e63946;
+    --jaune: #ffd60a;
+    --blanc: #f8f9fa;
+    --gris: #1a1a2e;
+    --gris2: #16213e;
+    --vert: #2ec4b6;
+    --orange: #ff6b35;
+    --font-titre: 'Bebas Neue', cursive;
+    --font-body: 'Space Grotesk', sans-serif;
+    --font-mono: 'Courier Prime', monospace;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body {
+    background: var(--noir);
+    color: var(--blanc);
+    font-family: var(--font-body);
+    overflow-x: hidden;
+  }
+
+  /* NOISE TEXTURE OVERLAY */
+  body::before {
+    content:'';
+    position:fixed; inset:0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events:none; z-index:999; opacity:.4;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top:0; left:0; right:0; z-index:100;
+    background: rgba(10,10,15,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(230,57,70,0.3);
+    padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 60px;
+  }
+  .nav-logo {
+    font-family: var(--font-titre);
+    font-size: 1.6rem;
+    color: var(--rouge);
+    letter-spacing: 2px;
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--jaune); }
+  .nav-links {
+    display: flex; gap: 1.5rem; list-style: none;
+  }
+  .nav-links a {
+    color: rgba(248,249,250,0.7);
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: color .2s;
+  }
+  .nav-links a:hover { color: var(--jaune); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    padding: 80px 2rem 4rem;
+    position: relative;
+    text-align: center;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset:0;
+    background: radial-gradient(ellipse at 30% 50%, rgba(230,57,70,0.12) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 20%, rgba(255,214,10,0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(46,196,182,0.06) 0%, transparent 40%);
+  }
+  .scan-lines {
+    position: absolute; inset:0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.01) 2px, rgba(255,255,255,0.01) 4px);
+    pointer-events: none;
+  }
+  .breaking-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--rouge);
+    color: white;
+    font-family: var(--font-mono);
+    font-weight: 700; font-size: 0.75rem;
+    padding: 6px 16px; border-radius: 2px;
+    letter-spacing: 2px; text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    animation: pulse-badge 2s ease-in-out infinite;
+    position: relative;
+  }
+  .breaking-badge::before {
+    content:''; width:8px; height:8px; background:#fff;
+    border-radius: 50%;
+    animation: blink 1s ease-in-out infinite;
+  }
+  @keyframes pulse-badge { 0%,100%{box-shadow:0 0 0 0 rgba(230,57,70,0.4)} 50%{box-shadow:0 0 0 12px rgba(230,57,70,0)} }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+  .hero h1 {
+    font-family: var(--font-titre);
+    font-size: clamp(4rem, 12vw, 9rem);
+    line-height: 0.9;
+    letter-spacing: -2px;
+    position: relative;
+  }
+  .hero h1 .line1 { color: var(--blanc); display:block; }
+  .hero h1 .line2 { color: var(--rouge); display:block; text-shadow: 3px 3px 0 rgba(230,57,70,0.3); }
+  .hero h1 .line3 { color: var(--jaune); display:block; }
+
+  .hero-sub {
+    font-size: 1.1rem;
+    color: rgba(248,249,250,0.6);
+    max-width: 600px;
+    line-height: 1.7;
+    margin: 2rem auto;
+    font-weight: 300;
+  }
+  .hero-sub strong { color: var(--jaune); font-weight: 600; }
+
+  /* JAUGE MANIPULATION */
+  .jauge-container {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,214,10,0.2);
+    border-radius: 16px;
+    padding: 2rem;
+    max-width: 500px;
+    width: 100%;
+    margin: 2rem auto;
+    position: relative;
+  }
+  .jauge-title {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--jaune);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 1rem;
+  }
+  .jauge-question {
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+    color: var(--blanc);
+  }
+  .jauge-options {
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .jauge-option {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 12px 16px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all .2s;
+    text-align: left;
+  }
+  .jauge-option:hover { border-color: var(--jaune); background: rgba(255,214,10,0.08); }
+  .jauge-option.correct { border-color: var(--vert); background: rgba(46,196,182,0.15); }
+  .jauge-option.wrong { border-color: var(--rouge); background: rgba(230,57,70,0.15); }
+  .feedback {
+    margin-top: 1rem; padding: 12px;
+    border-radius: 8px; font-size: 0.9rem;
+    display: none; line-height: 1.5;
+  }
+  .feedback.show { display:block; }
+  .feedback.good { background: rgba(46,196,182,0.15); border: 1px solid var(--vert); }
+  .feedback.bad { background: rgba(230,57,70,0.15); border: 1px solid var(--rouge); }
+  .score-bar {
+    height: 6px; border-radius: 3px;
+    background: rgba(255,255,255,0.1);
+    margin-top: 1rem;
+    overflow: hidden;
+  }
+  .score-fill {
+    height:100%; border-radius:3px;
+    background: linear-gradient(90deg, var(--rouge), var(--jaune));
+    width: 0%; transition: width 1s ease;
+  }
+
+  /* CTA */
+  .hero-cta {
+    display: flex; gap: 1rem; flex-wrap: wrap;
+    justify-content: center; margin-top: 2rem;
+  }
+  .btn-primary {
+    background: var(--rouge);
+    color: white; border: none;
+    padding: 14px 32px; border-radius: 4px;
+    font-family: var(--font-body);
+    font-size: 0.95rem; font-weight: 600;
+    cursor: pointer; text-decoration: none;
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: all .2s; letter-spacing: 0.5px;
+  }
+  .btn-primary:hover { background: #c1121f; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(230,57,70,0.35); }
+  .btn-secondary {
+    background: transparent;
+    color: var(--jaune);
+    border: 1px solid var(--jaune);
+    padding: 14px 32px; border-radius: 4px;
+    font-family: var(--font-body);
+    font-size: 0.95rem; font-weight: 600;
+    cursor: pointer; text-decoration: none;
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: all .2s;
+  }
+  .btn-secondary:hover { background: rgba(255,214,10,0.1); transform: translateY(-2px); }
+
+  /* SCROLL INDICATOR */
+  .scroll-hint {
+    position:absolute; bottom:2rem; left:50%; transform:translateX(-50%);
+    display:flex; flex-direction:column; align-items:center; gap:6px;
+    color:rgba(255,255,255,0.3); font-size:0.7rem; letter-spacing:2px; text-transform:uppercase;
+  }
+  .scroll-arrow { animation: bounce 2s ease-in-out infinite; }
+  @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(6px)} }
+
+  /* SECTION STATS */
+  .stats {
+    padding: 4rem 2rem;
+    background: var(--gris);
+    border-top: 1px solid rgba(230,57,70,0.2);
+    border-bottom: 1px solid rgba(230,57,70,0.2);
+  }
+  .stats-grid {
+    max-width: 900px; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 2rem; text-align:center;
+  }
+  .stat-item {}
+  .stat-num {
+    font-family: var(--font-titre);
+    font-size: 3.5rem; line-height:1;
+    color: var(--rouge);
+  }
+  .stat-label {
+    font-size: 0.85rem; color: rgba(255,255,255,0.5);
+    margin-top: 6px; line-height: 1.4;
+    font-weight: 300;
+  }
+
+  /* SECTION PARCOURS */
+  .parcours {
+    padding: 6rem 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .section-header {
+    text-align: center; margin-bottom: 4rem;
+  }
+  .section-tag {
+    font-family: var(--font-mono);
+    font-size: 0.75rem; color: var(--vert);
+    text-transform: uppercase; letter-spacing: 3px;
+    margin-bottom: 1rem;
+  }
+  .section-title {
+    font-family: var(--font-titre);
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    line-height: 1; letter-spacing: 1px;
+  }
+  .seq-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+  .seq-card {
+    background: var(--gris2);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: all .3s;
+    cursor: pointer;
+    text-decoration: none; color: inherit;
+    display: block;
+  }
+  .seq-card::before {
+    content:'';
+    position:absolute; top:0; left:0; right:0; height:3px;
+    background: var(--card-color, var(--rouge));
+  }
+  .seq-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--card-color, var(--rouge));
+    box-shadow: 0 16px 40px rgba(0,0,0,0.4);
+  }
+  .seq-num {
+    font-family: var(--font-titre);
+    font-size: 4rem; line-height:1;
+    color: var(--card-color, var(--rouge));
+    opacity: 0.3;
+    position: absolute; top: 1.5rem; right: 1.5rem;
+  }
+  .seq-icon {
+    font-size: 2rem; margin-bottom: 1rem;
+    display:block;
+  }
+  .seq-card h3 {
+    font-family: var(--font-titre);
+    font-size: 1.8rem; letter-spacing: 1px;
+    color: var(--blanc); margin-bottom: 0.5rem;
+  }
+  .seq-card .seq-sub {
+    font-size: 0.8rem; font-family: var(--font-mono);
+    color: var(--card-color, var(--rouge));
+    text-transform: uppercase; letter-spacing: 1px;
+    margin-bottom: 1rem;
+  }
+  .seq-card p {
+    font-size: 0.9rem; color: rgba(255,255,255,0.6);
+    line-height: 1.6;
+  }
+  .seq-card .seq-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 20px; padding: 4px 12px;
+    font-size: 0.75rem; margin-top: 1rem;
+    color: rgba(255,255,255,0.5);
+  }
+
+  /* SECTION OUTIL INTERACTIF */
+  .detecteur {
+    padding: 6rem 2rem;
+    background: var(--gris);
+  }
+  .detecteur-inner {
+    max-width: 800px; margin: 0 auto;
+  }
+  .fake-article {
+    background: var(--gris2);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 2rem;
+    position: relative;
+    margin: 2rem 0;
+  }
+  .fa-header {
+    display:flex; justify-content:space-between; align-items:center;
+    margin-bottom: 1rem; padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+  .fa-source {
+    font-family: var(--font-mono);
+    font-size:0.75rem; color:rgba(255,255,255,0.4);
+  }
+  .fa-date {
+    font-family: var(--font-mono);
+    font-size:0.7rem; color:rgba(255,255,255,0.3);
+  }
+  .fa-titre {
+    font-family: var(--font-titre);
+    font-size: 1.8rem; line-height:1.1;
+    color: var(--blanc); margin-bottom: 1rem;
+  }
+  .fa-body {
+    font-size: 0.9rem; color: rgba(255,255,255,0.65);
+    line-height: 1.7;
+  }
+  .fa-body .surligne {
+    background: rgba(255,214,10,0.25);
+    border-bottom: 2px solid var(--jaune);
+    cursor: pointer;
+    transition: all .2s;
+    padding: 0 2px;
+  }
+  .fa-body .surligne:hover {
+    background: rgba(255,214,10,0.45);
+  }
+  .fa-body .surligne.found {
+    background: rgba(230,57,70,0.3);
+    border-color: var(--rouge);
+  }
+  .indices-trouvés {
+    display:flex; gap:8px; flex-wrap:wrap; margin:1.5rem 0;
+  }
+  .indice-tag {
+    background: rgba(230,57,70,0.2);
+    border: 1px solid rgba(230,57,70,0.4);
+    color: var(--rouge);
+    padding: 6px 14px; border-radius: 20px;
+    font-size: 0.8rem; font-family: var(--font-mono);
+    opacity:0; transform:scale(0.8);
+    transition: all .3s;
+  }
+  .indice-tag.visible { opacity:1; transform:scale(1); }
+
+  /* METHODE SECTIONS */
+  .methodes { padding: 6rem 2rem; max-width:1000px; margin:0 auto; }
+  .methode-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+  .methode-card {
+    text-align:center; padding: 2.5rem 1.5rem;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    background: var(--gris2);
+    transition: all .3s;
+  }
+  .methode-card:hover { border-color: rgba(46,196,182,0.4); transform:translateY(-3px); }
+  .methode-icon {
+    width: 56px; height: 56px;
+    border-radius: 14px;
+    display:flex; align-items:center; justify-content:center;
+    margin: 0 auto 1.5rem;
+    font-size: 1.5rem;
+    background: rgba(46,196,182,0.12);
+    border: 1px solid rgba(46,196,182,0.25);
+  }
+  .methode-card h4 {
+    font-family: var(--font-titre);
+    font-size: 1.3rem; letter-spacing: 1px;
+    color: var(--blanc); margin-bottom: 0.75rem;
+  }
+  .methode-card p {
+    font-size: 0.85rem; color: rgba(255,255,255,0.55);
+    line-height: 1.6;
+  }
+
+  /* FOOTER */
+  footer {
+    padding: 3rem 2rem;
+    background: var(--gris);
+    border-top: 1px solid rgba(255,255,255,0.08);
+    text-align: center;
+  }
+  .footer-logo {
+    font-family: var(--font-titre);
+    font-size: 2rem; color: var(--rouge);
+    letter-spacing: 2px;
+    margin-bottom: 0.5rem;
+  }
+  footer p {
+    font-size: 0.8rem; color: rgba(255,255,255,0.3);
+    max-width: 500px; margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* ANIMATIONS D'ENTRÉE */
+  .fade-in { opacity:0; transform:translateY(20px); transition: opacity .6s ease, transform .6s ease; }
+  .fade-in.visible { opacity:1; transform:translateY(0); }
+
+  @media (max-width: 600px) {
+    .nav-links { display:none; }
+    .hero h1 { font-size: 3.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">Détective<span>Info</span></a>
+  <ul class="nav-links">
+    <li><a href="#parcours">Le parcours</a></li>
+    <li><a href="sequence1.html">Séquences</a></li>
+    <li><a href="#detecteur">L'outil</a></li>
+    <li><a href="outils.html">Ressources</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="scan-lines"></div>
+
+  <div class="breaking-badge">Alerte info</div>
+
+  <h1>
+    <span class="line1">Es-tu</span>
+    <span class="line2">manipulé</span>
+    <span class="line3">?</span>
+  </h1>
+
+  <p class="hero-sub">
+    Chaque jour, <strong>60% des ados</strong> partagent des infos sans les vérifier.<br>
+    Deviens un <strong>Détective de l'Information</strong> — apprends à démasquer les fake news.
+  </p>
+
+  <!-- MINI QUIZ D'ACCROCHE -->
+  <div class="jauge-container fade-in" id="quiz">
+    <div class="jauge-title">⚡ Test rapide — 10 secondes</div>
+    <div class="jauge-question" id="q-text">
+      Tu vois cette info sur Instagram : <em>"Un scientifique a prouvé que boire du cola chaud guérit le rhume en 2 heures."</em> Tu fais quoi ?
+    </div>
+    <div class="jauge-options">
+      <button class="jauge-option" onclick="repondre(this, false)">Je like et je partage — c'est utile !</button>
+      <button class="jauge-option" onclick="repondre(this, true)">Je cherche d'abord la source avant de partager</button>
+      <button class="jauge-option" onclick="repondre(this, false)">Je fais confiance si ça vient d'un ami</button>
+    </div>
+    <div class="feedback" id="feedback"></div>
+    <div class="score-bar"><div class="score-fill" id="score-fill"></div></div>
+  </div>
+
+  <div class="hero-cta">
+    <a href="sequence1.html" class="btn-primary">▶ Commencer l'enquête</a>
+    <a href="#parcours" class="btn-secondary">Voir le parcours →</a>
+  </div>
+
+  <div class="scroll-hint">
+    <span>Découvrir</span>
+    <div class="scroll-arrow">↓</div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="stats">
+  <div class="stats-grid">
+    <div class="stat-item fade-in">
+      <div class="stat-num">86%</div>
+      <div class="stat-label">des ados ont déjà partagé une fausse info sans le savoir</div>
+    </div>
+    <div class="stat-item fade-in" style="animation-delay:.1s">
+      <div class="stat-num">3x</div>
+      <div class="stat-label">plus vite : une fake news se propage 3× plus vite qu'une vraie</div>
+    </div>
+    <div class="stat-item fade-in" style="animation-delay:.2s">
+      <div class="stat-num">6s</div>
+      <div class="stat-label">c'est le temps moyen pour lire un titre avant de le partager</div>
+    </div>
+    <div class="stat-item fade-in" style="animation-delay:.3s">
+      <div class="stat-num">?</div>
+      <div class="stat-label">et toi — sauras-tu faire la différence après ce parcours ?</div>
+    </div>
+  </div>
+</section>
+
+<!-- PARCOURS -->
+<section class="parcours" id="parcours">
+  <div class="section-header fade-in">
+    <div class="section-tag">// Le parcours d'enquête</div>
+    <h2 class="section-title">5 MISSIONS<br>À ACCOMPLIR</h2>
+  </div>
+
+  <div class="seq-grid">
+    <a href="sequence1.html" class="seq-card fade-in" style="--card-color:#e63946">
+      <span class="seq-num">01</span>
+      <span class="seq-icon">🔍</span>
+      <h3>Le Piège</h3>
+      <div class="seq-sub">Reconnaître une fake news</div>
+      <p>Analyse une fausse une de journal, repère les 6 indices suspects, évite le piège tendu par la désinformation.</p>
+      <span class="seq-badge">⏱ 20 min · Niveau débutant</span>
+    </a>
+
+    <a href="sequence2.html" class="seq-card fade-in" style="--card-color:#ff6b35; animation-delay:.1s">
+      <span class="seq-num">02</span>
+      <span class="seq-icon">🧠</span>
+      <h3>L'Émotion</h3>
+      <div class="seq-sub">Anatomie d'une manipulation</div>
+      <p>Découvre pourquoi ton cerveau est programmé pour croire les fake news — et comment résister à la manipulation émotionnelle.</p>
+      <span class="seq-badge">⏱ 25 min · Niveau intermédiaire</span>
+    </a>
+
+    <a href="sequence3.html" class="seq-card fade-in" style="--card-color:#2ec4b6; animation-delay:.2s">
+      <span class="seq-num">03</span>
+      <span class="seq-icon">🕵️</span>
+      <h3>L'Enquête</h3>
+      <div class="seq-sub">Les outils du fact-checker</div>
+      <p>Maîtrise les mêmes outils que les journalistes professionnels : reverse image search, vérification de sources, SIDIIEF...</p>
+      <span class="seq-badge">⏱ 30 min · Avec outils réels</span>
+    </a>
+
+    <a href="sequence4.html" class="seq-card fade-in" style="--card-color:#ffd60a; animation-delay:.3s">
+      <span class="seq-num">04</span>
+      <span class="seq-icon">⚗️</span>
+      <h3>Le Labo</h3>
+      <div class="seq-sub">Créer pour mieux démolir</div>
+      <p>Mission secrète : fabrique toi-même une fake news convaincante, puis échange avec un camarade — et démonte la sienne !</p>
+      <span class="seq-badge">⏱ 35 min · Activité duo</span>
+    </a>
+
+    <a href="sequence5.html" class="seq-card fade-in" style="--card-color:#a8dadc; animation-delay:.4s">
+      <span class="seq-num">05</span>
+      <span class="seq-icon">🏆</span>
+      <h3>Le Défi Final</h3>
+      <div class="seq-sub">Deviens ambassadeur</div>
+      <p>Création d'une affiche ou vidéo courte pour sensibiliser tes camarades. Le meilleur projet est publié sur le site !</p>
+      <span class="seq-badge">⏱ 40 min · Projet créatif</span>
+    </a>
+
+    <a href="outils.html" class="seq-card fade-in" style="--card-color:#6c757d; animation-delay:.5s">
+      <span class="seq-num">⚙️</span>
+      <span class="seq-icon">🧰</span>
+      <h3>Boîte à Outils</h3>
+      <div class="seq-sub">Ressources permanentes</div>
+      <p>Fiches mémo téléchargeables, sites de fact-checking recommandés, guide SIDIIEF illustré, liens vérifiés par ton prof.</p>
+      <span class="seq-badge">📥 À télécharger</span>
+    </a>
+  </div>
+</section>
+
+<!-- DETECTEUR INTERACTIF -->
+<section class="detecteur" id="detecteur">
+  <div class="detecteur-inner">
+    <div class="section-header fade-in">
+      <div class="section-tag">// Outil interactif</div>
+      <h2 class="section-title" style="font-size:3.5rem">DÉTECTEUR<br>DE FAKE NEWS</h2>
+      <p style="color:rgba(255,255,255,0.5); margin-top:1rem; font-size:0.9rem">Clique sur les éléments surlignés pour identifier les indices suspects</p>
+    </div>
+
+    <div class="fake-article fade-in">
+      <div class="fa-header">
+        <span class="fa-source">infos-incroyables24.net</span>
+        <span class="fa-date">publié il y a 3 min</span>
+      </div>
+      <div class="fa-titre">
+        URGENT : Les <span class="surligne" data-indice="Titre alarmiste" onclick="trouverIndice(this)">téléphones INTERDITS dans toutes les écoles dès LUNDI</span>
+      </div>
+      <div class="fa-body">
+        <p>Selon <span class="surligne" data-indice="Source vague" onclick="trouverIndice(this)">des experts reconnus</span>, une nouvelle loi secrète va être appliquée dans <span class="surligne" data-indice="Chiffre invérifiable" onclick="trouverIndice(this)">97% des établissements</span>.</p>
+        <br>
+        <p>Les professeurs pourront désormais <span class="surligne" data-indice="Contenu choquant" onclick="trouverIndice(this)">lire tous tes messages privés</span> sans prévenir. Cette information a été <span class="surligne" data-indice="Appel à partager" onclick="trouverIndice(this)">PARTAGÉE PAR PLUS DE 50 000 PERSONNES — PARTAGE VITE</span> avant que ça soit censuré !</p>
+        <br>
+        <p><em style="opacity:0.5; font-size:0.8rem">Aucun auteur mentionné · Aucune date de publication officielle</em></p>
+      </div>
+    </div>
+
+    <div id="indices-container" class="indices-trouvés"></div>
+    <div id="bravo" style="display:none; background:rgba(46,196,182,0.15); border:1px solid var(--vert); border-radius:12px; padding:1.5rem; margin-top:1rem;">
+      <strong style="color:var(--vert)">✓ Excellent travail, Détective !</strong>
+      <p style="margin-top:.5rem; font-size:.9rem; color:rgba(255,255,255,0.7)">Tu as identifié les 5 indices suspects. Dans la vraie vie, cette info ne mérite pas d'être partagée. Continue vers la Séquence 1 pour en apprendre plus !</p>
+      <a href="sequence1.html" class="btn-primary" style="margin-top:1rem; display:inline-flex">→ Démarrer la mission 1</a>
+    </div>
+  </div>
+</section>
+
+<!-- METHODES -->
+<section class="methodes fade-in">
+  <div class="section-header">
+    <div class="section-tag">// La méthode</div>
+    <h2 class="section-title">LA RÈGLE<br>SIDIIEF</h2>
+    <p style="color:rgba(255,255,255,0.5); margin-top:1rem; font-size:0.95rem">6 questions à toujours poser face à une information</p>
+  </div>
+
+  <div class="methode-grid">
+    <div class="methode-card">
+      <div class="methode-icon">📡</div>
+      <h4>Source</h4>
+      <p>D'où vient cette information ? Quel est le site ou le média ? Est-il fiable ?</p>
+    </div>
+    <div class="methode-card">
+      <div class="methode-icon">📅</div>
+      <h4>Date</h4>
+      <p>Quand a été publiée cette info ? Une vieille info remise en circulation peut induire en erreur.</p>
+    </div>
+    <div class="methode-card">
+      <div class="methode-icon">✍️</div>
+      <h4>Identité</h4>
+      <p>Qui a écrit cet article ? L'auteur est-il identifiable et crédible ?</p>
+    </div>
+    <div class="methode-card">
+      <div class="methode-icon">📍</div>
+      <h4>Lieu</h4>
+      <p>Où les faits se sont-ils passés ? Est-ce que la localisation est précise et vérifiable ?</p>
+    </div>
+    <div class="methode-card">
+      <div class="methode-icon">🖼️</div>
+      <h4>Image</h4>
+      <p>L'image illustre-t-elle vraiment le fait ? N'est-elle pas détournée ou modifiée ?</p>
+    </div>
+    <div class="methode-card">
+      <div class="methode-icon">🔗</div>
+      <h4>Fiabilité</h4>
+      <p>D'autres sources sérieuses confirment-elles cette information ?</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Détective<span style="color:var(--jaune)">Info</span></div>
+  <p style="margin-top:1rem">Un microsite pédagogique pour apprendre à distinguer le vrai du faux sur internet. Créé pour les élèves de collège.</p>
+  <p style="margin-top:0.5rem; opacity:0.4">Sources : Clemi, Décodex, AFP Factuel · Projet éducatif</p>
+</footer>
+
+<script>
+// QUIZ ACCROCHE
+let answered = false;
+function repondre(btn, correct) {
+  if(answered) return;
+  answered = true;
+  const feedback = document.getElementById('feedback');
+  const fill = document.getElementById('score-fill');
+  document.querySelectorAll('.jauge-option').forEach(b => b.style.pointerEvents = 'none');
+  if(correct) {
+    btn.classList.add('correct');
+    feedback.className = 'feedback show good';
+    feedback.innerHTML = '✓ Bonne réflexion ! Vérifier la source avant de partager, c\'est le premier réflexe d\'un bon Détective de l\'Information. Continue sur ce microsite pour affiner tes compétences !';
+    fill.style.width = '80%';
+  } else {
+    btn.classList.add('wrong');
+    feedback.className = 'feedback show bad';
+    feedback.innerHTML = '⚠ Attention ! C\'est exactement comme ça que les fake news se propagent. Pas d\'inquiétude — ce parcours va t\'apprendre à résister à ces pièges !';
+    fill.style.width = '20%';
+  }
+}
+
+// DETECTEUR
+let indicesTrouves = 0;
+const totalIndices = 5;
+function trouverIndice(el) {
+  if(el.classList.contains('found')) return;
+  el.classList.add('found');
+  indicesTrouves++;
+  const container = document.getElementById('indices-container');
+  const tag = document.createElement('span');
+  tag.className = 'indice-tag';
+  tag.textContent = '⚠ ' + el.dataset.indice;
+  container.appendChild(tag);
+  setTimeout(() => tag.classList.add('visible'), 50);
+  if(indicesTrouves >= totalIndices) {
+    document.getElementById('bravo').style.display = 'block';
+  }
+}
+
+// INTERSECTION OBSERVER pour animations
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

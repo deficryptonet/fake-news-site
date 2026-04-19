@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mission 04 — Le Labo | Détective Info</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@300;400;500;600;700&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --noir:#0a0a0f;--rouge:#e63946;--jaune:#ffd60a;--blanc:#f8f9fa;
+    --gris:#1a1a2e;--gris2:#16213e;--vert:#2ec4b6;--orange:#ff6b35;
+    --seq-color:#ffd60a;
+    --font-titre:'Bebas Neue',cursive;--font-body:'Space Grotesk',sans-serif;--font-mono:'Courier Prime',monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--noir);color:var(--blanc);font-family:var(--font-body);overflow-x:hidden;}
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,10,15,0.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,214,10,0.3);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:60px;}
+  .nav-logo{font-family:var(--font-titre);font-size:1.6rem;color:var(--rouge);letter-spacing:2px;text-decoration:none;}
+  .nav-logo span{color:var(--jaune);}
+  .nav-back{color:rgba(255,255,255,0.5);text-decoration:none;font-size:0.8rem;letter-spacing:1px;display:flex;align-items:center;gap:6px;transition:color .2s;}
+  .nav-back:hover{color:var(--blanc);}
+  .sep{height:1px;background:linear-gradient(90deg,transparent,rgba(255,214,10,0.3),transparent);margin:0 2rem;}
+  .bloc{padding:3.5rem 2rem;max-width:800px;margin:0 auto;}
+  .bloc-header{display:flex;align-items:center;gap:16px;margin-bottom:2rem;}
+  .bloc-num{font-family:var(--font-titre);font-size:3rem;color:var(--seq-color);line-height:1;}
+  .bloc-tag{font-family:var(--font-mono);font-size:0.7rem;color:var(--vert);letter-spacing:2px;text-transform:uppercase;margin-bottom:2px;}
+  .bloc h2{font-family:var(--font-titre);font-size:2rem;letter-spacing:1px;}
+  .bloc p{font-size:0.95rem;color:rgba(255,255,255,0.7);line-height:1.8;margin-bottom:1rem;}
+  .mission-hero{padding:100px 2rem 3rem;max-width:800px;margin:0 auto;text-align:center;}
+  .mission-badge{display:inline-flex;align-items:center;gap:10px;background:rgba(255,214,10,0.12);border:1px solid rgba(255,214,10,0.35);border-radius:4px;padding:8px 20px;font-family:var(--font-mono);font-size:0.8rem;letter-spacing:2px;color:var(--jaune);margin-bottom:2rem;}
+  .mission-title{font-family:var(--font-titre);font-size:clamp(3rem,8vw,6rem);line-height:1;letter-spacing:2px;margin-bottom:1rem;}
+  .mission-sub{font-size:1.1rem;color:rgba(255,255,255,0.6);line-height:1.7;}
+
+  /* AVERTISSEMENT */
+  .avertissement{background:rgba(255,214,10,0.08);border:1px solid rgba(255,214,10,0.3);border-radius:12px;padding:1.5rem;display:flex;gap:12px;align-items:flex-start;margin:2rem 0;}
+  .av-icon{font-size:1.5rem;flex-shrink:0;}
+  .av-text{font-size:0.88rem;color:rgba(255,255,255,0.75);line-height:1.7;}
+  .av-text strong{color:var(--jaune);}
+
+  /* GÉNÉRATEUR */
+  .generateur{background:var(--gris2);border:1px solid rgba(255,214,10,0.2);border-radius:16px;padding:2rem;margin:2rem 0;}
+  .gen-title{font-family:var(--font-titre);font-size:2rem;color:var(--jaune);letter-spacing:1px;margin-bottom:1.5rem;}
+  .gen-row{margin-bottom:1.5rem;}
+  .gen-label{font-family:var(--font-mono);font-size:0.75rem;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;display:block;}
+  .gen-select, .gen-input{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:10px 14px;color:var(--blanc);font-family:var(--font-body);font-size:0.9rem;appearance:none;-webkit-appearance:none;cursor:pointer;transition:border-color .2s;}
+  .gen-select:focus,.gen-input:focus{outline:none;border-color:var(--jaune);}
+  .gen-select:hover,.gen-input:hover{border-color:rgba(255,214,10,0.4);}
+  .gen-option-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;}
+  .gen-chip{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:8px 14px;font-size:0.82rem;cursor:pointer;transition:all .2s;text-align:center;}
+  .gen-chip:hover{border-color:var(--jaune);color:var(--jaune);}
+  .gen-chip.selected{background:rgba(255,214,10,0.15);border-color:var(--jaune);color:var(--jaune);}
+  .gen-btn{background:var(--jaune);color:#000;border:none;padding:14px 28px;border-radius:8px;font-family:var(--font-titre);font-size:1.2rem;letter-spacing:1px;cursor:pointer;transition:all .2s;margin-top:1rem;display:flex;align-items:center;gap:8px;}
+  .gen-btn:hover{background:#e6c200;transform:translateY(-2px);}
+
+  /* RÉSULTAT FAKE NEWS */
+  .fn-result{background:var(--gris);border:2px dashed rgba(255,214,10,0.3);border-radius:16px;padding:2rem;margin:2rem 0;display:none;}
+  .fn-result.show{display:block;animation:fadeIn .4s ease;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  .fn-label{font-family:var(--font-mono);font-size:0.7rem;color:var(--jaune);text-transform:uppercase;letter-spacing:2px;margin-bottom:1rem;}
+  .fn-titre{font-family:var(--font-titre);font-size:1.8rem;line-height:1.2;color:var(--blanc);margin-bottom:1rem;}
+  .fn-body{font-size:0.9rem;color:rgba(255,255,255,0.7);line-height:1.7;margin-bottom:1rem;}
+  .fn-meta{font-family:var(--font-mono);font-size:0.72rem;color:rgba(255,255,255,0.3);}
+  .fn-indices{margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid rgba(255,214,10,0.2);}
+  .fn-ind-title{font-family:var(--font-titre);font-size:1.2rem;color:var(--jaune);margin-bottom:1rem;letter-spacing:1px;}
+  .fn-ind-list{display:flex;flex-direction:column;gap:8px;}
+  .fn-ind-item{display:flex;align-items:flex-start;gap:10px;font-size:0.85rem;color:rgba(255,255,255,0.65);line-height:1.5;}
+  .fn-ind-item::before{content:'⚠';flex-shrink:0;color:var(--jaune);}
+
+  /* GRILLE D'ANALYSE */
+  .grille{background:var(--gris2);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:2rem;margin:2rem 0;}
+  .grille-title{font-family:var(--font-titre);font-size:1.8rem;color:var(--blanc);letter-spacing:1px;margin-bottom:0.5rem;}
+  .grille-sub{font-size:0.85rem;color:rgba(255,255,255,0.4);margin-bottom:1.5rem;}
+  .grille-item{margin-bottom:1.25rem;}
+  .grille-q{font-size:0.88rem;color:rgba(255,255,255,0.8);margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+  .grille-q::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--seq-color);flex-shrink:0;}
+  .grille-input{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px 14px;color:var(--blanc);font-family:var(--font-body);font-size:0.88rem;resize:vertical;min-height:60px;}
+  .grille-input:focus{outline:none;border-color:var(--jaune);}
+  .grille-score{display:flex;gap:6px;margin-top:4px;}
+  .grille-star{width:28px;height:28px;border:1px solid rgba(255,255,255,0.15);border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:0.9rem;transition:all .2s;}
+  .grille-star:hover,.grille-star.active{background:rgba(255,214,10,0.2);border-color:var(--jaune);}
+  .submit-grille{background:transparent;border:1px solid var(--jaune);color:var(--jaune);padding:12px 28px;border-radius:8px;font-family:var(--font-titre);font-size:1.1rem;letter-spacing:1px;cursor:pointer;transition:all .2s;margin-top:1rem;}
+  .submit-grille:hover{background:rgba(255,214,10,0.12);}
+
+  /* MÉMO */
+  .memo{background:var(--gris);border:1px solid rgba(255,214,10,0.25);border-radius:12px;padding:2rem;margin-top:2rem;}
+  .memo h3{font-family:var(--font-titre);font-size:2rem;color:var(--jaune);margin-bottom:1.5rem;letter-spacing:1px;}
+  .memo p{font-size:0.9rem;color:rgba(255,255,255,0.7);line-height:1.8;margin-bottom:0.75rem;}
+  .memo p strong{color:var(--jaune);}
+
+  .seq-nav{display:flex;justify-content:space-between;align-items:center;padding:3rem 2rem;max-width:800px;margin:0 auto;border-top:1px solid rgba(255,255,255,0.08);}
+  .btn-nav{background:transparent;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.7);padding:12px 24px;border-radius:8px;font-family:var(--font-body);font-size:0.9rem;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:all .2s;}
+  .btn-nav:hover{border-color:var(--seq-color);color:var(--blanc);}
+  .btn-nav-next{background:var(--seq-color);border-color:var(--seq-color);color:#000;}
+  .btn-nav-next:hover{background:#e6c200;color:#000;}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-logo">Détective<span>Info</span></a>
+  <a href="index.html" class="nav-back">← Retour à l'accueil</a>
+</nav>
+
+<section class="mission-hero">
+  <div class="mission-badge">// Mission 04 · Durée estimée : 35 min · Activité duo</div>
+  <h1 class="mission-title">LE LABO</h1>
+  <p class="mission-sub">Mission secrète : fabrique une fake news convaincante — puis échange avec ton camarade et démonte la sienne !</p>
+</section>
+<div class="sep"></div>
+
+<!-- AVERTISSEMENT PÉDAGOGIQUE -->
+<div class="bloc" style="padding-top:2.5rem;">
+  <div class="avertissement">
+    <span class="av-icon">⚗️</span>
+    <div class="av-text"><strong>Pourquoi créer une fake news ?</strong><br>
+    La meilleure façon de comprendre comment fonctionne un piège, c'est de l'assembler soi-même. Cet exercice est uniquement pédagogique — la fake news que tu crées reste dans la classe, elle n'est jamais publiée. L'objectif : comprendre les techniques de manipulation de l'intérieur.</div>
+  </div>
+
+  <!-- BLOC 1 : GÉNÉRATEUR -->
+  <div class="bloc-header" style="margin-top:2rem;">
+    <div class="bloc-num">01</div>
+    <div class="bloc-info">
+      <div class="bloc-tag">// Partie A — en solo</div>
+      <h2>Construis ta fake news</h2>
+    </div>
+  </div>
+  <p>Choisis les ingrédients, le générateur crée le texte — puis montre-le à ton camarade sans lui révéler les indices cachés :</p>
+
+  <div class="generateur">
+    <div class="gen-title">⚗️ Générateur de Fake News</div>
+
+    <div class="gen-row">
+      <span class="gen-label">1. Choisis un sujet (ça doit être crédible pour des ados)</span>
+      <div class="gen-option-grid">
+        <div class="gen-chip" onclick="selectChip(this,'sujet','école')">L'école</div>
+        <div class="gen-chip" onclick="selectChip(this,'sujet','telephones')">Les téléphones</div>
+        <div class="gen-chip" onclick="selectChip(this,'sujet','jeux')">Jeux vidéo</div>
+        <div class="gen-chip" onclick="selectChip(this,'sujet','reseaux')">Réseaux sociaux</div>
+        <div class="gen-chip" onclick="selectChip(this,'sujet','sport')">Le sport</div>
+        <div class="gen-chip" onclick="selectChip(this,'sujet','sante')">La santé</div>
+      </div>
+    </div>
+
+    <div class="gen-row">
+      <span class="gen-label">2. Quelle émotion veux-tu provoquer ?</span>
+      <div class="gen-option-grid">
+        <div class="gen-chip" onclick="selectChip(this,'emotion','peur')">😨 Peur</div>
+        <div class="gen-chip" onclick="selectChip(this,'emotion','colere')">😡 Colère</div>
+        <div class="gen-chip" onclick="selectChip(this,'emotion','surprise')">😮 Surprise</div>
+        <div class="gen-chip" onclick="selectChip(this,'emotion','indignation')">😤 Indignation</div>
+      </div>
+    </div>
+
+    <div class="gen-row">
+      <span class="gen-label">3. Technique de manipulation principale</span>
+      <div class="gen-option-grid">
+        <div class="gen-chip" onclick="selectChip(this,'technique','chiffres')">📊 Faux chiffres</div>
+        <div class="gen-chip" onclick="selectChip(this,'technique','urgence')">⚡ Fausse urgence</div>
+        <div class="gen-chip" onclick="selectChip(this,'technique','complot')">🔍 Complot secret</div>
+        <div class="gen-chip" onclick="selectChip(this,'technique','autorite')">👔 Fausse autorité</div>
+      </div>
+    </div>
+
+    <button class="gen-btn" onclick="genererFakeNews()">⚗️ Générer ma fake news</button>
+  </div>
+
+  <!-- RÉSULTAT -->
+  <div class="fn-result" id="fn-result">
+    <div class="fn-label">// Fake news générée — À usage pédagogique uniquement</div>
+    <div class="fn-titre" id="fn-titre"></div>
+    <div class="fn-body" id="fn-body"></div>
+    <div class="fn-meta" id="fn-meta"></div>
+    <div class="fn-indices">
+      <div class="fn-ind-title">⚠ Indices cachés (ne montre pas ça à ton camarade !)</div>
+      <div class="fn-ind-list" id="fn-indices"></div>
+    </div>
+  </div>
+</div>
+
+<!-- BLOC 2 : GRILLE D'ANALYSE DU CAMARADE -->
+<div class="bloc">
+  <div class="bloc-header">
+    <div class="bloc-num">02</div>
+    <div class="bloc-info">
+      <div class="bloc-tag">// Partie B — en duo</div>
+      <h2>Démonte la fake news de ton camarade</h2>
+    </div>
+  </div>
+  <p>Ton camarade te montre sa fake news (sans te donner les indices). Analyse-la avec cette grille :</p>
+
+  <div class="grille">
+    <div class="grille-title">Grille d'analyse</div>
+    <div class="grille-sub">Remplis chaque case avec ce que tu as trouvé</div>
+
+    <div class="grille-item">
+      <div class="grille-q">Quel(s) indice(s) trahissent que c'est une fake news ?</div>
+      <textarea class="grille-input" placeholder="Ex : titre alarmiste, source vague, chiffre invérifiable..."></textarea>
+    </div>
+    <div class="grille-item">
+      <div class="grille-q">Quelle émotion cette fake news cherche-t-elle à provoquer ?</div>
+      <textarea class="grille-input" placeholder="Ex : la peur, la colère... et comment tu l'as deviné"></textarea>
+    </div>
+    <div class="grille-item">
+      <div class="grille-q">Quel outil utiliserais-tu pour vérifier cette information ?</div>
+      <textarea class="grille-input" placeholder="Ex : Google Lens pour l'image, AFP Factuel pour la rumeur..."></textarea>
+    </div>
+    <div class="grille-item">
+      <div class="grille-q">Note de convaincance : à quel point cette fake news était crédible ?</div>
+      <div class="grille-score" id="stars">
+        <div class="grille-star" onclick="setStars(1)">1</div>
+        <div class="grille-star" onclick="setStars(2)">2</div>
+        <div class="grille-star" onclick="setStars(3)">3</div>
+        <div class="grille-star" onclick="setStars(4)">4</div>
+        <div class="grille-star" onclick="setStars(5)">5</div>
+      </div>
+      <div style="font-size:0.75rem;color:rgba(255,255,255,0.3);margin-top:6px;font-family:var(--font-mono);">1 = pas du tout convaincant · 5 = très convaincant</div>
+    </div>
+
+    <button class="submit-grille" onclick="submitGrille()">✓ Valider mon analyse</button>
+    <div id="grille-fb" style="display:none;margin-top:1.5rem;background:rgba(46,196,182,0.1);border:1px solid rgba(46,196,182,0.3);border-radius:10px;padding:1.25rem;font-size:0.88rem;color:rgba(255,255,255,0.75);line-height:1.7;"></div>
+  </div>
+</div>
+
+<!-- MÉMO -->
+<div class="bloc">
+  <div class="memo">
+    <h3>Ce que ce labo t'a appris</h3>
+    <p>En <strong>créant</strong> une fake news, tu as compris les <strong>choix délibérés</strong> de ceux qui les fabriquent : sujet ciblé, émotion choisie, technique adaptée. Ce n'est pas du hasard.</p>
+    <p>En <strong>analysant</strong> celle de ton camarade, tu as exercé ton regard critique en situation réelle, sans filet.</p>
+    <p>La prochaine fois que tu verras une info choquante, tu penseras automatiquement : <strong>"Quel sujet ? Quelle émotion ? Quelle technique ?"</strong> — et tu seras moins manipulable.</p>
+  </div>
+</div>
+
+<div class="seq-nav">
+  <a href="sequence3.html" class="btn-nav">← Mission 03</a>
+  <span style="font-family:var(--font-mono);font-size:0.8rem;color:rgba(255,255,255,0.3)">Mission 4/5</span>
+  <a href="sequence5.html" class="btn-nav btn-nav-next">Mission 05 : Le Défi →</a>
+</div>
+
+<script>
+const selections = {sujet:'',emotion:'',technique:''};
+
+function selectChip(el,cat,val) {
+  document.querySelectorAll('[onclick*="selectChip"][onclick*="\''+cat+'\'"]').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  selections[cat]=val;
+}
+
+const templates = {
+  ecole:{peur:{urgence:"URGENT : Le gouvernement va supprimer les vacances scolaires dès janvier",body:"Selon une décision ultra-confidentielle du ministère, les élèves pourraient être obligés d'aller en cours 7j/7 à partir de l'année prochaine. Un document secret circulant dans les couloirs du ministère révèle que cette réforme toucherait en priorité les collèges. PARTAGEZ VITE avant que l'info soit censurée !",meta:"source-secrete-education.fr · Aucun auteur · Publié à 00h03"},peur:{complot:"Des profs espionnent les conversations WhatsApp des élèves depuis 2022",body:"Selon des parents d'élèves anonymes, certains établissements auraient accès à un logiciel permettant de lire tous les messages envoyés depuis le réseau Wi-Fi du collège. Des scientifiques du monde entier s'inquiètent de cette pratique.",meta:"parentsencolere.net · Auteur : Admin · Aujourd'hui"},colere:{chiffres:"Révélation : 94% des enseignants lisent les copies au hasard selon une étude",body:"Une étude publiée par des chercheurs reconnus montre que la grande majorité des professeurs ne lisent pas réellement les copies mais attribuent des notes aléatoires. Ce scandale éducatif touche 94,3% des établissements français.",meta:"vrai-ou-faux-education.com · Source : "des chercheurs""},surprise:{autorite:"Un ancien ministre révèle : le bac sera supprimé dès 2025 [EXCLUSIF]",body:"Dans une interview accordée à notre rédaction, un haut fonctionnaire sous couvert d'anonymat nous a confié que le baccalauréat sera définitivement supprimé. Cette information explosive n'a pas encore été rendue publique.",meta:"infos-exclusives24.fr · Publié il y a 4 minutes"}},
+  telephones:{peur:{chiffres:"ALERTE : Les smartphones provoqueraient une maladie du cerveau chez 99% des ados",body:"Une nouvelle étude scientifique mondiale révèle que 99,4% des adolescents de 12 à 16 ans souffrent déjà d'une dégradation mesurable de leur mémoire à cause des smartphones. Les chiffres sont alarmants selon des experts.",meta:"sante-numerique-alerte.fr · Source : experts anonymes"},colere:{urgence:"Le gouvernement veut taxer les parents pour chaque heure de téléphone de leur enfant",body:"Un projet de loi secret en cours d'examen à l'Assemblée nationale prévoit une taxe de 2€ par heure d'utilisation du smartphone pour les moins de 18 ans. Cette mesure entrerait en vigueur dès le 1er mars. PARTAGEZ VITE !",meta:"liberation-fiscale.info · Aucun journaliste identifié"},surprise:{complot:"RÉVÉLATION : TikTok enregistre toutes vos conversations même téléphone éteint",body:"Des ingénieurs informatiques ayant travaillé chez TikTok révèlent que l'application est capable d'activer le microphone de votre téléphone même quand il est éteint. Millions d'ados espionnés à leur insu.",meta:"tech-insiders-secrets.com"}},
+  jeux:{peur:{chiffres:"Les jeux vidéo rendent violent : 87% des délinquants jouaient 2h/j selon une étude",body:"Une étude internationale portant sur 50 000 cas révèle que 87,3% des jeunes délinquants jouaient aux jeux vidéo plus de 2 heures par jour. Des scientifiques affirment qu'un lien de causalité direct a été établi.",meta:"science-et-jeunesse.org · Auteur : Dr. Anonyme"},surprise:{urgence:"URGENT : Fortnite va devenir payant à 50€/mois dès la semaine prochaine",body:"Epic Games aurait pris la décision de rendre Fortnite payant avec un abonnement de 49,99€ par mois à compter du lundi prochain. Un document interne de la société aurait fuité sur le darkweb. PARTAGEZ pour prévenir vos amis !",meta:"gaming-infos-exclusives.fr"}},
+  reseaux:{colere:{complot:"Instagram supprime les comptes de tous les ados en France dès vendredi",body:"Meta aurait décidé, sous pression du gouvernement français, de supprimer automatiquement tous les comptes Instagram appartenant à des mineurs d'ici vendredi soir. Des millions de photos seraient perdues définitivement.",meta:"social-media-watch.fr"},peur:{autorite:"Un expert de l'ONU : les réseaux sociaux aussi dangereux que la drogue pour les ados",body:"Lors d'une conférence à Genève, un expert onusien aurait déclaré que l'utilisation des réseaux sociaux provoque chez les adolescents des effets neurologiques identiques à ceux des drogues dures. Cette déclaration n'a pas été médiatisée.",meta:"onu-sante-mentale-ados.info · Source : conférence non-retransmise"}},
+  sport:{surprise:{chiffres:"Le PSG en faillite : 2,3 milliards de dettes selon des documents confidentiels",body:"Des documents comptables confidentiels obtenus par notre rédaction révèlent que le Paris Saint-Germain serait en situation de quasi-faillite avec 2,3 milliards d'euros de dettes cachées. La saison prochaine pourrait être la dernière.",meta:"foot-insider-fr.com · Documents non vérifiables"},colere:{urgence:"SCANDALE : Des arbitres auraient été achetés pour truquer 3 matchs de Ligue 1",body:"Selon une source anonyme proche de la FFF, au moins trois matchs de Ligue 1 cette saison auraient été truqués grâce à des pots-de-vin versés à des arbitres. L'affaire serait étouffée par la fédération. PARTAGEZ AVANT CENSURE !",meta:"vrai-foot-fr.net"}},
+  sante:{peur:{autorite:"Un médecin révèle : boire de l'eau froide le matin détruit l'estomac",body:"Le Dr. Jean-François Martin, gastroentérologue reconnu, a déclaré lors d'un congrès médical que boire de l'eau froide à jeun provoque des lésions irréversibles de la paroi stomacale chez 78% des personnes. Cette information est volontairement cachée par l'industrie des boissons.",meta:"sante-naturelle-veritable.com"},surprise:{chiffres:"EXCLUSIF : Les masques chirurgicaux réduiraient le QI de 15 points selon une étude",body:"Une étude confidentielle portant sur 12 000 élèves révèle que le port prolongé du masque réduirait les capacités cognitives de 14,8 points de QI en moyenne. Données volontairement non-publiées par les autorités sanitaires.",meta:"verite-sante-fr.org · Auteur non mentionné"}}
+};
+
+const indicesParTechnique = {
+  chiffres:["Chiffre très précis (ex : 94,3%) sans source vérifiable","Statistique impressionnante présentée comme un fait établi","Aucun lien vers l'étude citée"],
+  urgence:["Mot 'URGENT' ou 'VITE' qui empêche de réfléchir","Date d'entrée en vigueur très proche et inventée","Injonction à partager immédiatement"],
+  complot:["Information présentée comme 'secrète' ou 'censurée'","Source anonyme non-vérifiable","Langue du complot : 'on vous cache', 'avant que ça soit supprimé'"],
+  autorite:["Expert non-identifiable ('Dr. Anonyme', 'ancien ministre')","Conférence ou étude impossible à retrouver","Titre professionnel présent mais nom absent"]
+};
+
+const indicesParEmotion = {
+  peur:"Le titre et les mots choisis créent une anxiété immédiate ('alerte', 'danger', 'alarmant')",
+  colere:"Le contenu vise à indigner ('scandale', 'révélation', 'étouffé')",
+  surprise:"L'information est conçue pour stupéfier et faire partager ('révélation', 'exclusif')",
+  indignation:"Le contenu vise à indigner contre une autorité (école, gouvernement, entreprise)"
+};
+
+function genererFakeNews() {
+  const {sujet,emotion,technique} = selections;
+  if(!sujet||!emotion||!technique) { alert('Choisis un sujet, une émotion et une technique !'); return; }
+
+  // Trouver le template le plus proche
+  const ts = templates[sujet] || templates['telephones'];
+  let template = null;
+  if(ts[emotion] && ts[emotion][technique]) template = ts[emotion][technique];
+  else if(ts[emotion]) { const k=Object.keys(ts[emotion])[0]; template = ts[emotion][k]; }
+  else { const e=Object.keys(ts)[0]; const t=Object.keys(ts[e])[0]; template = ts[e][t]; }
+
+  // Type selon template string ou objet
+  let titre,body,meta;
+  if(typeof template === 'string') { titre=template; body="Selon des sources proches du dossier, cette information circule depuis plusieurs jours sans être démentie officiellement. Des milliers de personnes seraient concernées. Partagez cet article pour informer votre entourage."; meta="infos-rapides.fr · Aucun auteur · Publié à l'instant"; }
+  else { titre=template; body="[Corps auto-généré pour cet exemple pédagogique]"; meta="source-exemple.fr"; }
+
+  // Si template est objet complet
+  if(templates[sujet] && templates[sujet][emotion] && templates[sujet][emotion][technique] && typeof templates[sujet][emotion][technique]==='object') {
+    const t = templates[sujet][emotion][technique];
+    titre = Object.keys(t)[0] === '0' ? t : t; // simple fix
+  }
+
+  // Reconstruire depuis les données structurées
+  let fntitle, fnbody, fnmeta;
+  try {
+    const s = templates[sujet];
+    const e = s[emotion] || s[Object.keys(s)[0]];
+    const tc = e[technique] || e[Object.keys(e)[0]];
+    if(typeof tc === 'object' && tc.body) { fntitle = Object.keys(tc).find(k=>k!=='body'&&k!=='meta') || tc.title || "ALERTE"; fnbody = tc.body; fnmeta = tc.meta; }
+    else { fntitle=tc; fnbody="Information qui circule en ce moment sur les réseaux sans vérification possible. Partagez pour prévenir !"; fnmeta="alerte-info-fr.com · Aucun auteur"; }
+  } catch(e) { fntitle="URGENT : Information choquante révélée"; fnbody="Cette info secrète que vous devez partager immédiatement !"; fnmeta="source-anonyme.fr"; }
+
+  // Reconstruire plus proprement
+  const sData = templates[sujet] || templates.telephones;
+  let eData = sData[emotion];
+  if(!eData) eData = sData[Object.keys(sData)[0]];
+  let tData = eData[technique];
+  if(!tData) tData = eData[Object.keys(eData)[0]];
+  
+  if(typeof tData === 'string') { fntitle=tData; fnbody="Selon des sources proches du dossier, cette information explosive n'a pas encore été démentie par les autorités. Des millions de personnes sont concernées. PARTAGEZ MAINTENANT !"; fnmeta="infos-urgent.fr · Auteur inconnu · Il y a 2 min"; }
+  else { fntitle=tData.split('·')[0]||tData; fnbody=tData; fnmeta="source-exclusive.fr"; }
+
+  // Approche simplifiée et robuste
+  const allTemplates = {
+    "ecole_peur_urgence":{t:"URGENT : Le gouvernement veut supprimer les vacances scolaires dès janvier",b:"Selon une décision confidentielle du ministère, les collèges et lycées pourraient passer à 7 jours de cours par semaine dès la rentrée prochaine. Un document interne circule. PARTAGEZ avant censure !",m:"info-education-fr.net · Aucun auteur · Il y a 3 min"},
+    "ecole_colere_chiffres":{t:"Révélation : 94% des profs attribuent des notes au hasard selon une étude",b:"Une étude portant sur 50 000 élèves révèle que 94,3% des enseignants ne lisent pas les copies jusqu'au bout. Ce scandale touche la quasi-totalité des établissements.",m:"vrai-ou-faux-education.com · Source anonyme"},
+    "telephones_peur_chiffres":{t:"ALERTE : Les smartphones provoqueraient une maladie du cerveau chez 99% des ados",b:"Une nouvelle étude scientifique mondiale révèle que 99,4% des adolescents souffrent déjà d'une dégradation mesurable de la mémoire. Les chiffres sont alarmants selon des experts non identifiés.",m:"sante-numerique-alerte.fr · Experts anonymes"},
+    "jeux_colere_complot":{t:"RÉVÉLATION : Les jeux vidéo contiennent des messages cachés pour manipuler les jeunes",b:"Des chercheurs affirment avoir découvert des algorithmes secrets dans les 10 jeux les plus populaires, conçus pour créer une dépendance. Cette information est volontairement cachée par les éditeurs.",m:"gaming-verité.fr · Source secrète"},
+    "reseaux_peur_urgence":{t:"URGENT : Instagram va supprimer tous les comptes ados en France vendredi",b:"Meta aurait décidé, sous pression du gouvernement français, de supprimer automatiquement tous les comptes mineurs d'ici vendredi soir. Des millions de photos perdues. PARTAGEZ pour prévenir !",m:"social-media-watch.fr · Il y a 1 min"},
+    "sport_surprise_autorite":{t:"Un ancien arbitre révèle : 3 matchs de Ligue 1 étaient truqués cette saison",b:"Dans une interview exclusive accordée sous couvert d'anonymat, un ex-arbitre de Ligue 1 confirme que des matchs ont été truqués cette saison. La FFF étoufferait l'affaire.",m:"foot-insider-exclusif.fr · Source : arbitre anonyme"},
+    "sante_peur_autorite":{t:"Un médecin révèle ce que l'industrie vous cache sur l'eau du robinet",b:"Le Dr. Martin (nom changé pour sa protection) alerte : l'eau du robinet contiendrait des perturbateurs endocriniens à des doses 10x supérieures aux normes autorisées. Données volontairement cachées.",m:"sante-naturelle-veritable.com · Dr. Anonyme"}
+  };
+
+  const key = sujet+'_'+emotion+'_'+technique;
+  let chosen = allTemplates[key];
+  if(!chosen) {
+    const fallbackKeys = Object.keys(allTemplates).filter(k=>k.startsWith(sujet+'_'));
+    chosen = allTemplates[fallbackKeys[0]] || allTemplates["telephones_peur_chiffres"];
+  }
+
+  document.getElementById('fn-titre').textContent = chosen.t;
+  document.getElementById('fn-body').textContent = chosen.b;
+  document.getElementById('fn-meta').textContent = chosen.m;
+
+  // Indices
+  const inds = indicesParTechnique[technique] || indicesParTechnique.chiffres;
+  const emotionInd = indicesParEmotion[emotion] || indicesParEmotion.peur;
+  const allInds = [...inds, emotionInd];
+  document.getElementById('fn-indices').innerHTML = allInds.map(i=>`<div class="fn-ind-item">${i}</div>`).join('');
+
+  document.getElementById('fn-result').classList.add('show');
+  document.getElementById('fn-result').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// GRILLE STARS
+let starCount=0;
+function setStars(n) {
+  starCount=n;
+  document.querySelectorAll('.grille-star').forEach((s,i)=>{ if(i<n) s.classList.add('active'); else s.classList.remove('active'); });
+}
+
+function submitGrille() {
+  const inputs = document.querySelectorAll('.grille-input');
+  let filled = 0;
+  inputs.forEach(i=>{ if(i.value.trim().length>5) filled++; });
+  const fb = document.getElementById('grille-fb');
+  if(filled < 2) { fb.style.background='rgba(230,57,70,0.1)'; fb.style.border='1px solid #e63946'; fb.innerHTML='⚠ Remplis au moins 2 cases pour valider ton analyse !'; fb.style.display='block'; return; }
+  fb.style.background='rgba(46,196,182,0.1)'; fb.style.border='1px solid #2ec4b6';
+  fb.innerHTML = '✓ <strong style="color:#2ec4b6">Excellent travail !</strong> Tu viens de faire exactement ce que fait un journaliste fact-checker : analyse systématique, identification des techniques, proposition d\'outils de vérification. Cette expérience de fabrication + déconstruction est le meilleur vaccin contre les fake news.<br><br>Prêt pour la Mission Finale ?';
+  fb.style.display='block';
+}
+</script>
+</body>
+</html>

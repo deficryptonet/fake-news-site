@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mission 05 — Le Défi Final | Détective Info</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@300;400;500;600;700&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{--noir:#0a0a0f;--rouge:#e63946;--jaune:#ffd60a;--blanc:#f8f9fa;--gris:#1a1a2e;--gris2:#16213e;--vert:#2ec4b6;--orange:#ff6b35;--seq-color:#a8dadc;--font-titre:'Bebas Neue',cursive;--font-body:'Space Grotesk',sans-serif;--font-mono:'Courier Prime',monospace;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--noir);color:var(--blanc);font-family:var(--font-body);overflow-x:hidden;}
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,10,15,0.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(168,218,220,0.3);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:60px;}
+  .nav-logo{font-family:var(--font-titre);font-size:1.6rem;color:var(--rouge);letter-spacing:2px;text-decoration:none;}
+  .nav-logo span{color:var(--jaune);}
+  .nav-back{color:rgba(255,255,255,0.5);text-decoration:none;font-size:0.8rem;letter-spacing:1px;display:flex;align-items:center;gap:6px;transition:color .2s;}
+  .nav-back:hover{color:var(--blanc);}
+  .sep{height:1px;background:linear-gradient(90deg,transparent,rgba(168,218,220,0.3),transparent);margin:0 2rem;}
+  .bloc{padding:3.5rem 2rem;max-width:800px;margin:0 auto;}
+  .bloc-header{display:flex;align-items:center;gap:16px;margin-bottom:2rem;}
+  .bloc-num{font-family:var(--font-titre);font-size:3rem;color:var(--seq-color);line-height:1;}
+  .bloc-tag{font-family:var(--font-mono);font-size:0.7rem;color:var(--vert);letter-spacing:2px;text-transform:uppercase;margin-bottom:2px;}
+  .bloc h2{font-family:var(--font-titre);font-size:2rem;letter-spacing:1px;}
+  .bloc p{font-size:0.95rem;color:rgba(255,255,255,0.7);line-height:1.8;margin-bottom:1rem;}
+  .mission-hero{padding:100px 2rem 3rem;max-width:800px;margin:0 auto;text-align:center;}
+  .mission-badge{display:inline-flex;align-items:center;gap:10px;background:rgba(168,218,220,0.12);border:1px solid rgba(168,218,220,0.35);border-radius:4px;padding:8px 20px;font-family:var(--font-mono);font-size:0.8rem;letter-spacing:2px;color:var(--seq-color);margin-bottom:2rem;}
+  .mission-title{font-family:var(--font-titre);font-size:clamp(3rem,8vw,6rem);line-height:1;letter-spacing:2px;margin-bottom:1rem;}
+  .mission-sub{font-size:1.1rem;color:rgba(255,255,255,0.6);line-height:1.7;}
+
+  /* QUIZ FINAL */
+  .quiz-container{background:var(--gris2);border:1px solid rgba(168,218,220,0.2);border-radius:16px;padding:2rem;margin:2rem 0;}
+  .quiz-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;}
+  .quiz-progress{font-family:var(--font-mono);font-size:0.75rem;color:rgba(255,255,255,0.4);}
+  .quiz-score-display{font-family:var(--font-titre);font-size:1.5rem;color:var(--seq-color);}
+  .quiz-question{font-size:1rem;color:var(--blanc);line-height:1.6;margin-bottom:1.5rem;min-height:60px;}
+  .quiz-options{display:flex;flex-direction:column;gap:10px;}
+  .quiz-option{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:12px 16px;cursor:pointer;font-size:0.9rem;text-align:left;color:var(--blanc);font-family:var(--font-body);transition:all .2s;}
+  .quiz-option:hover{border-color:var(--seq-color);background:rgba(168,218,220,0.08);}
+  .quiz-option:disabled{cursor:not-allowed;}
+  .quiz-option.bon{border-color:var(--vert)!important;background:rgba(46,196,182,0.15)!important;}
+  .quiz-option.mauvais{border-color:var(--rouge)!important;background:rgba(230,57,70,0.1)!important;}
+  .quiz-feedback{margin-top:1rem;padding:12px 16px;border-radius:8px;font-size:0.88rem;line-height:1.6;display:none;}
+  .quiz-feedback.show{display:block;}
+  .quiz-bar{height:6px;border-radius:3px;background:rgba(255,255,255,0.08);margin-bottom:1.5rem;overflow:hidden;}
+  .quiz-bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--seq-color),var(--vert));transition:width .5s;}
+  .btn-next-quiz{background:rgba(168,218,220,0.12);border:1px solid rgba(168,218,220,0.3);color:var(--seq-color);padding:10px 24px;border-radius:8px;font-family:var(--font-body);font-size:0.9rem;cursor:pointer;margin-top:1rem;transition:all .2s;display:none;}
+  .btn-next-quiz:hover{background:rgba(168,218,220,0.2);}
+
+  /* PROJET CRÉATIF */
+  .projet-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.5rem;margin:2rem 0;}
+  .projet-card{background:var(--gris2);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:1.5rem;cursor:pointer;transition:all .3s;position:relative;}
+  .projet-card.selected{border-color:var(--seq-color);background:rgba(168,218,220,0.06);}
+  .projet-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--seq-color);border-radius:16px 16px 0 0;transform:scaleX(0);transition:transform .3s;}
+  .projet-card.selected::before,.projet-card:hover::before{transform:scaleX(1);}
+  .projet-icon{font-size:2rem;margin-bottom:1rem;display:block;}
+  .projet-name{font-family:var(--font-titre);font-size:1.4rem;color:var(--blanc);margin-bottom:0.5rem;letter-spacing:1px;}
+  .projet-desc{font-size:0.83rem;color:rgba(255,255,255,0.55);line-height:1.5;}
+
+  /* CERTIFICAT */
+  .certif-section{text-align:center;padding:4rem 2rem;max-width:800px;margin:0 auto;}
+  .certif-title{font-family:var(--font-titre);font-size:3rem;color:var(--jaune);letter-spacing:2px;margin-bottom:1rem;}
+  .certif-container{background:var(--gris2);border:2px solid rgba(255,214,10,0.3);border-radius:20px;padding:2rem;margin:2rem auto;max-width:600px;}
+  .certif-name-input{background:rgba(255,255,255,0.06);border:1px solid rgba(255,214,10,0.3);border-radius:8px;padding:12px 20px;color:var(--blanc);font-family:var(--font-titre);font-size:1.5rem;letter-spacing:2px;width:100%;text-align:center;margin-bottom:1.5rem;}
+  .certif-name-input::placeholder{color:rgba(255,255,255,0.2);}
+  .certif-name-input:focus{outline:none;border-color:var(--jaune);}
+  .btn-certif{background:var(--jaune);color:#000;border:none;padding:16px 40px;border-radius:8px;font-family:var(--font-titre);font-size:1.5rem;letter-spacing:2px;cursor:pointer;transition:all .2s;margin-top:1rem;}
+  .btn-certif:hover{background:#e6c200;transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,214,10,0.3);}
+
+  /* CERTIFICAT VISUEL */
+  #certif-display{display:none;margin:2rem auto;max-width:600px;}
+  .certif-visual{background:linear-gradient(135deg,#0a0a0f 0%,#1a1a2e 100%);border:2px solid rgba(255,214,10,0.5);border-radius:20px;padding:3rem 2.5rem;text-align:center;position:relative;overflow:hidden;}
+  .certif-visual::before,.certif-visual::after{content:'';position:absolute;border-radius:50%;}
+  .certif-visual::before{width:300px;height:300px;background:radial-gradient(rgba(255,214,10,0.06),transparent);top:-100px;right:-100px;}
+  .certif-visual::after{width:200px;height:200px;background:radial-gradient(rgba(46,196,182,0.06),transparent);bottom:-80px;left:-80px;}
+  .certif-medal{font-size:4rem;margin-bottom:1rem;display:block;animation:spinIn .6s ease;}
+  @keyframes spinIn{from{transform:scale(0) rotate(-180deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
+  .certif-headline{font-family:var(--font-titre);font-size:1rem;color:rgba(255,214,10,0.6);letter-spacing:4px;text-transform:uppercase;margin-bottom:1rem;}
+  .certif-recipient{font-family:var(--font-titre);font-size:2.5rem;color:var(--jaune);letter-spacing:2px;margin:1rem 0;}
+  .certif-text{font-size:0.85rem;color:rgba(255,255,255,0.6);line-height:1.7;margin-bottom:1.5rem;}
+  .certif-badges{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:1.5rem;}
+  .certif-badge{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:6px 14px;font-size:0.75rem;font-family:var(--font-mono);color:rgba(255,255,255,0.6);}
+  .certif-seal{font-family:var(--font-mono);font-size:0.7rem;color:rgba(255,214,10,0.4);letter-spacing:2px;margin-top:1rem;}
+  .btn-print{background:transparent;border:1px solid rgba(255,214,10,0.3);color:var(--jaune);padding:10px 24px;border-radius:8px;font-family:var(--font-body);font-size:0.85rem;cursor:pointer;margin-top:1rem;transition:all .2s;}
+  .btn-print:hover{background:rgba(255,214,10,0.1);}
+
+  /* RETOUR ACCUEIL */
+  .fin-section{text-align:center;padding:4rem 2rem;border-top:1px solid rgba(255,255,255,0.06);}
+  .fin-title{font-family:var(--font-titre);font-size:4rem;color:var(--blanc);letter-spacing:2px;margin-bottom:1rem;}
+  .fin-sub{font-size:1rem;color:rgba(255,255,255,0.5);max-width:500px;margin:0 auto 2rem;line-height:1.7;}
+  .btn-home{background:var(--rouge);color:white;border:none;padding:14px 32px;border-radius:4px;font-family:var(--font-body);font-size:0.95rem;font-weight:600;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:all .2s;}
+  .btn-home:hover{background:#c1121f;transform:translateY(-2px);}
+
+  .seq-nav{display:flex;justify-content:space-between;align-items:center;padding:3rem 2rem;max-width:800px;margin:0 auto;border-top:1px solid rgba(255,255,255,0.08);}
+  .btn-nav{background:transparent;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.7);padding:12px 24px;border-radius:8px;font-family:var(--font-body);font-size:0.9rem;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:all .2s;}
+  .btn-nav:hover{border-color:var(--seq-color);color:var(--blanc);}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-logo">Détective<span>Info</span></a>
+  <a href="index.html" class="nav-back">← Retour à l'accueil</a>
+</nav>
+
+<section class="mission-hero">
+  <div class="mission-badge">// Mission 05 · Finale · Durée estimée : 40 min</div>
+  <h1 class="mission-title">LE DÉFI<br>FINAL</h1>
+  <p class="mission-sub">Prouve que tu es un vrai Détective de l'Information — Quiz final + projet créatif + ton certificat personnalisé.</p>
+</section>
+<div class="sep"></div>
+
+<!-- QUIZ FINAL -->
+<div class="bloc">
+  <div class="bloc-header">
+    <div class="bloc-num">01</div>
+    <div class="bloc-info">
+      <div class="bloc-tag">// Le grand quiz</div>
+      <h2>10 questions — Es-tu prêt ?</h2>
+    </div>
+  </div>
+  <p>Ce quiz reprend toutes les compétences développées dans les 4 premières missions. Une seule bonne réponse par question :</p>
+
+  <div class="quiz-container">
+    <div class="quiz-header">
+      <span class="quiz-progress" id="q-progress">Question 1/10</span>
+      <span class="quiz-score-display">Score : <span id="q-score">0</span>/10</span>
+    </div>
+    <div class="quiz-bar"><div class="quiz-bar-fill" id="q-bar" style="width:10%"></div></div>
+    <div class="quiz-question" id="q-text"></div>
+    <div class="quiz-options" id="q-options"></div>
+    <div class="quiz-feedback" id="q-feedback"></div>
+    <button class="btn-next-quiz" id="q-next" onclick="nextQuestion()">Question suivante →</button>
+  </div>
+  <div id="quiz-result" style="display:none;background:rgba(168,218,220,0.1);border:1px solid rgba(168,218,220,0.3);border-radius:16px;padding:2rem;text-align:center;margin-top:1.5rem;">
+    <div style="font-family:var(--font-titre);font-size:3.5rem;color:var(--seq-color);letter-spacing:2px;" id="result-title"></div>
+    <div style="font-size:1rem;color:rgba(255,255,255,0.7);margin-top:1rem;line-height:1.7;" id="result-text"></div>
+  </div>
+</div>
+
+<!-- PROJET CRÉATIF -->
+<div class="bloc">
+  <div class="bloc-header">
+    <div class="bloc-num">02</div>
+    <div class="bloc-info">
+      <div class="bloc-tag">// Le projet ambassadeur</div>
+      <h2>Crée pour sensibiliser</h2>
+    </div>
+  </div>
+  <p>Maintenant que tu maîtrises la détection des fake news, il est temps de <strong style="color:var(--seq-color)">transmettre</strong> ce que tu sais. Choisis ton format de projet créatif :</p>
+
+  <div class="projet-grid">
+    <div class="projet-card" onclick="selectProjet(this,'affiche')">
+      <span class="projet-icon">🎨</span>
+      <div class="projet-name">Affiche</div>
+      <div class="projet-desc">Crée une affiche pédagogique à imprimer et afficher dans ton collège. Résume la méthode SIDIIEF en une image percutante.</div>
+    </div>
+    <div class="projet-card" onclick="selectProjet(this,'video')">
+      <span class="projet-icon">🎬</span>
+      <div class="projet-name">Vidéo courte</div>
+      <div class="projet-desc">Réalise une vidéo de 60 secondes (type TikTok/Reels) pour expliquer comment vérifier une info — avec humour ou drama !</div>
+    </div>
+    <div class="projet-card" onclick="selectProjet(this,'quiz')">
+      <span class="projet-icon">📝</span>
+      <div class="projet-name">Quiz classe</div>
+      <div class="projet-desc">Crée un quiz de 5 questions sur les fake news pour le faire passer à tes camarades de classe ou à ta famille.</div>
+    </div>
+    <div class="projet-card" onclick="selectProjet(this,'bd')">
+      <span class="projet-icon">🖊️</span>
+      <div class="projet-name">BD / Strip</div>
+      <div class="projet-desc">Dessine une courte bande dessinée ou un strip en 4 cases qui raconte comment un perso évite de se faire avoir par une fake news.</div>
+    </div>
+  </div>
+
+  <div id="projet-guide" style="display:none;background:var(--gris2);border:1px solid rgba(168,218,220,0.2);border-radius:12px;padding:1.5rem;margin-top:1rem;">
+    <div style="font-family:var(--font-titre);font-size:1.5rem;color:var(--seq-color);margin-bottom:1rem;letter-spacing:1px;" id="pg-title"></div>
+    <div style="font-size:0.9rem;color:rgba(255,255,255,0.7);line-height:1.7;" id="pg-content"></div>
+  </div>
+</div>
+
+<!-- CERTIFICAT -->
+<div class="certif-section">
+  <div style="font-family:var(--font-mono);font-size:0.75rem;color:var(--vert);letter-spacing:3px;text-transform:uppercase;margin-bottom:1rem;">// Ta récompense</div>
+  <div class="certif-title">TON CERTIFICAT</div>
+  <p style="color:rgba(255,255,255,0.5);font-size:0.9rem;max-width:500px;margin:0 auto 2rem;line-height:1.7;">Tu as complété les 5 missions du parcours Détective Info. Entre ton prénom pour recevoir ton certificat personnalisé :</p>
+
+  <div class="certif-container">
+    <input type="text" class="certif-name-input" id="certif-name" placeholder="TON PRÉNOM" maxlength="20">
+    <button class="btn-certif" onclick="genererCertificat()">🏆 GÉNÉRER MON CERTIFICAT</button>
+  </div>
+
+  <div id="certif-display">
+    <div class="certif-visual">
+      <span class="certif-medal">🏆</span>
+      <div class="certif-headline">Certificat de réussite</div>
+      <div style="font-family:var(--font-mono);font-size:0.75rem;color:rgba(255,255,255,0.3);margin-bottom:1rem;letter-spacing:1px;">Détective Info — Parcours complet</div>
+      <div class="certif-recipient" id="certif-name-display">PRÉNOM</div>
+      <div class="certif-text">
+        a complété avec succès le parcours<br>
+        <strong style="color:var(--jaune)">DÉTECTIVE INFO — Fake News & Esprit Critique</strong><br>
+        et maîtrise les compétences suivantes :
+      </div>
+      <div class="certif-badges">
+        <span class="certif-badge">✓ Identifier une fake news</span>
+        <span class="certif-badge">✓ Résister à la manipulation</span>
+        <span class="certif-badge">✓ Méthode SIDIIEF</span>
+        <span class="certif-badge">✓ Outils fact-checking</span>
+        <span class="certif-badge">✓ Esprit critique actif</span>
+      </div>
+      <div class="certif-seal">// Validé · <span id="certif-date"></span></div>
+    </div>
+    <button class="btn-print" onclick="window.print()">🖨️ Imprimer / Sauvegarder</button>
+  </div>
+</div>
+
+<!-- FIN -->
+<div class="fin-section">
+  <div class="fin-title">MISSION<br>ACCOMPLIE</div>
+  <p class="fin-sub">Tu possèdes maintenant les outils pour naviguer dans l'information de façon éclairée. Mais l'esprit critique, ça s'entretient — continue à questionner, vérifier, et transmettre.</p>
+  <a href="index.html" class="btn-home">← Retour à l'accueil</a>
+</div>
+
+<div class="seq-nav">
+  <a href="sequence4.html" class="btn-nav">← Mission 04</a>
+  <span style="font-family:var(--font-mono);font-size:0.8rem;color:rgba(255,255,255,0.3)">Mission 5/5 — Finale</span>
+  <a href="outils.html" class="btn-nav" style="border-color:rgba(168,218,220,0.3);color:var(--seq-color)">Boîte à outils →</a>
+</div>
+
+<script>
+// QUIZ DATA
+const questions = [
+  {q:"Un titre dit 'URGENT : Cette info va tout changer pour les ados, PARTAGE VITE'. Que fais-tu ?",options:["Je partage immédiatement — c'est urgent !","Je cherche la source avant de partager","Je like sans partager pour rester informé","Je demande à mes amis ce qu'ils en pensent"],correct:1,exp:"✓ Correct ! Plus une info insiste pour être partagée vite, plus il faut ralentir. Cette urgence artificielle est une technique pour court-circuiter ton sens critique."},
+  {q:"Tu vois une statistique : '97,3% des ados ont déjà partagé une fake news'. Quel est le signal d'alarme ?",options:["Le pourcentage est trop précis et semble inventé","97% c'est beaucoup, donc c'est sûrement vrai","Les ados partagent beaucoup donc c'est crédible","Il n'y a pas de signal d'alarme ici"],correct:0,exp:"✓ Exact ! Un chiffre très précis (97,3% au lieu de 'environ 97%') sans source citée est souvent une technique pour paraître scientifique sans l'être."},
+  {q:"Pour vérifier si une image a été détournée, tu utilises :",options:["Le nombre de commentaires sous la photo","Google Lens ou la recherche inversée d'image","Le nom du compte qui a publié la photo","Le nombre de partages de la photo"],correct:1,exp:"✓ Parfait ! Google Lens ou images.google.com permettent de retrouver l'origine d'une image et de voir si elle a été utilisée dans un autre contexte."},
+  {q:"Qu'est-ce que le 'biais de confirmation' ?",options:["Croire une info plus facilement si elle est confirmée par un ami","Tendance à croire les infos qui confirment ce qu'on pense déjà","Confirmer une info en cherchant plusieurs sources","Biais qui nous fait partager les infos sans les lire"],correct:1,exp:"✓ Correct ! Le biais de confirmation nous pousse à accepter plus facilement les infos qui correspondent à nos opinions préexistantes, sans les vérifier."},
+  {q:"Sur AFP Factuel, tu peux :",options:["Créer de fausses informations","Vérifier si une rumeur a déjà été vérifiée par des journalistes","Partager des articles sans les lire","Apprendre à créer du contenu viral"],correct:1,exp:"✓ AFP Factuel est le service fact-checking de l'Agence France-Presse. Tu peux y chercher les rumeurs qui circulent et voir si elles ont été démontées."},
+  {q:"Un article cite 'des experts reconnus' mais ne donne aucun nom. C'est :",options:["Normal — les experts veulent garder l'anonymat","Un signal d'alarme : source vague et invérifiable","Acceptable si l'article vient d'un grand média","Un signe que l'info est trop sensible pour citer des noms"],correct:1,exp:"✓ 'Des experts reconnus' sans aucun nom est une technique classique. Un vrai article cite les experts avec leur nom, institution et lien vers leurs travaux."},
+  {q:"La méthode SIDIIEF, le premier S signifie :",options:["Statistiques","Sensationnalisme","Source","Sujet"],correct:2,exp:"✓ SIDIIEF : Source, Identité de l'auteur, Date, Images, Informations vérifiables, Effet émotionnel, Fiabilité croisée. La Source est toujours la première question à poser."},
+  {q:"Une info te met très en colère. Le bon réflexe est :",options:["Partager immédiatement pour alerter tout le monde","Prendre du recul — l'émotion forte peut indiquer une manipulation","Chercher d'autres personnes en colère pour valider","Écrire un commentaire incendiaire sous l'article"],correct:1,exp:"✓ Une émotion forte (colère, peur, indignation) est souvent délibérément provoquée par les fake news pour court-circuiter ton esprit critique. Le réflexe : souffler, puis vérifier."},
+  {q:"Le Décodex du Monde sert à :",options:["Décoder des messages secrets","Vérifier la fiabilité de sites d'information","Créer des articles de presse","Partager des articles vérifiés"],correct:1,exp:"✓ Le Décodex est une base de données créée par Le Monde qui évalue la fiabilité de centaines de sites web d'information. Très utile pour savoir si une source est sérieuse."},
+  {q:"Une même photo circule depuis des années mais est utilisée pour illustrer un 'événement d'aujourd'hui'. C'est :",options:["Normal — les journalistes réutilisent les archives","Une photo hors contexte — technique courante dans les fake news","Acceptable si l'événement est similaire","Un problème mineur qui ne change pas les faits"],correct:1,exp:"✓ Utiliser une ancienne photo pour illustrer un événement actuel est l'une des techniques les plus répandues. Google Lens en quelques secondes permet de détecter ça."}
+];
+
+let currentQ = 0;
+let score = 0;
+let answered = false;
+
+function renderQuestion() {
+  const q = questions[currentQ];
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('q-progress').textContent = 'Question '+(currentQ+1)+'/10';
+  document.getElementById('q-bar').style.width = ((currentQ+1)/10*100)+'%';
+  document.getElementById('q-feedback').style.display='none';
+  document.getElementById('q-feedback').className='quiz-feedback';
+  document.getElementById('q-next').style.display='none';
+  const optDiv = document.getElementById('q-options');
+  optDiv.innerHTML = q.options.map((o,i)=>`<button class="quiz-option" onclick="answerQ(this,${i})">${o}</button>`).join('');
+  answered = false;
+}
+
+function answerQ(btn, idx) {
+  if(answered) return;
+  answered = true;
+  const q = questions[currentQ];
+  document.querySelectorAll('.quiz-option').forEach(b=>b.disabled=true);
+  const fb = document.getElementById('q-feedback');
+  if(idx === q.correct) {
+    score++;
+    document.getElementById('q-score').textContent = score;
+    btn.classList.add('bon');
+    fb.style.background='rgba(46,196,182,0.12)'; fb.style.border='1px solid #2ec4b6';
+  } else {
+    btn.classList.add('mauvais');
+    document.querySelectorAll('.quiz-option')[q.correct].classList.add('bon');
+    fb.style.background='rgba(255,107,53,0.12)'; fb.style.border='1px solid rgba(255,107,53,0.4)';
+  }
+  fb.innerHTML = q.exp;
+  fb.classList.add('show');
+  document.getElementById('q-next').style.display = 'inline-block';
+  document.getElementById('q-next').textContent = currentQ >= questions.length-1 ? 'Voir mon résultat →' : 'Question suivante →';
+}
+
+function nextQuestion() {
+  currentQ++;
+  if(currentQ >= questions.length) {
+    showResult();
+  } else {
+    renderQuestion();
+  }
+}
+
+function showResult() {
+  document.querySelector('.quiz-container').style.display='none';
+  const r = document.getElementById('quiz-result');
+  r.style.display='block';
+  let title, text;
+  if(score >= 9) { title='EXCELLENT ! '+score+'/10'; text='Tu es un vrai Détective de l\'Information ! Tu maîtrises toutes les compétences pour détecter les fake news. Prêt à enseigner ça à d\'autres ?'; }
+  else if(score >= 7) { title='BIEN JOUÉ ! '+score+'/10'; text='Tu as bien assimilé les concepts. Quelques notions méritent peut-être une révision — consulte la Boîte à Outils pour consolider.'; }
+  else if(score >= 5) { title='PAS MAL ! '+score+'/10'; text='Tu es sur la bonne voie ! Relis les missions 1 à 3 pour consolider les bases de la méthode SIDIIEF et des outils fact-checking.'; }
+  else { title='À RÉVISER — '+score+'/10'; text='Les fake news te résistent encore un peu ! Reprends les missions depuis le début — la pratique est la meilleure façon d\'apprendre.'; }
+  document.getElementById('result-title').textContent = title;
+  document.getElementById('result-text').textContent = text;
+}
+
+renderQuestion();
+
+// PROJET GUIDE
+const projetGuides = {
+  affiche:{t:'🎨 Guide : Créer ton affiche',c:'Ton affiche doit tenir en 1 regard. Suggestions : (1) Le titre — accrocheur, ex. "Avant de partager, RÉFLÉCHIS". (2) La méthode SIDIIEF en 7 icônes simples. (3) Un exemple de fake news type avec les indices entourés. (4) Les 2-3 outils essentiels avec leur URL. Format recommandé : A3 paysage. Tu peux utiliser Canva (gratuit) pour la mise en page.'},
+  video:{t:'🎬 Guide : Créer ta vidéo 60 secondes',c:'Structure en 3 actes : (1) 0-10s — Accroche choc : montre une fake news convaincante et demande "Tu aurais cru ça ?". (2) 10-45s — Démonstration : montre en direct comment vérifier avec Google Lens ou AFP Factuel. (3) 45-60s — Message clé : "Source, date, image — vérifier avant partager". Tourne en vertical pour TikTok/Reels. Sous-titre obligatoire !'},
+  quiz:{t:'📝 Guide : Créer ton quiz de 5 questions',c:'Reprends le format de ce parcours ! Pour chaque question : un exemple concret de ta vie (une rumeur que tu as vue), 4 choix de réponse, une explication de la bonne réponse. Tu peux créer ton quiz sur Kahoot (gratuit, utilisable en classe) ou sur Mentimeter. L\'idéal : tester d\'abord sur ta famille, puis sur la classe.'},
+  bd:{t:'🖊️ Guide : Créer ta BD en 4 cases',c:'Case 1 : Un perso voit une info choquante sur son téléphone (montre son émotion). Case 2 : Il s\'apprête à partager — mais s\'arrête et décide de vérifier. Case 3 : Il utilise Google Lens ou AFP Factuel et découvre que c\'est faux. Case 4 : Il prévient ses amis et explique comment vérifier. Chaque case = 1 action, 1-2 bulles max. Simple et lisible !'}
+};
+
+function selectProjet(el,type) {
+  document.querySelectorAll('.projet-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  const guide = projetGuides[type];
+  document.getElementById('pg-title').textContent = guide.t;
+  document.getElementById('pg-content').textContent = guide.c;
+  document.getElementById('projet-guide').style.display='block';
+}
+
+// CERTIFICAT
+function genererCertificat() {
+  const name = document.getElementById('certif-name').value.trim().toUpperCase() || 'DÉTECTIVE';
+  document.getElementById('certif-name-display').textContent = name;
+  const now = new Date();
+  document.getElementById('certif-date').textContent = now.toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'});
+  const display = document.getElementById('certif-display');
+  display.style.display='block';
+  display.scrollIntoView({behavior:'smooth',block:'center'});
+}
+</script>
+</body>
+</html>

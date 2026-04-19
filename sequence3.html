@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mission 03 — L'Enquête | Détective Info</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@300;400;500;600;700&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --noir:#0a0a0f;--rouge:#e63946;--jaune:#ffd60a;--blanc:#f8f9fa;
+    --gris:#1a1a2e;--gris2:#16213e;--vert:#2ec4b6;--orange:#ff6b35;
+    --seq-color:#2ec4b6;
+    --font-titre:'Bebas Neue',cursive;--font-body:'Space Grotesk',sans-serif;--font-mono:'Courier Prime',monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--noir);color:var(--blanc);font-family:var(--font-body);overflow-x:hidden;}
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,10,15,0.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(46,196,182,0.3);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:60px;}
+  .nav-logo{font-family:var(--font-titre);font-size:1.6rem;color:var(--rouge);letter-spacing:2px;text-decoration:none;}
+  .nav-logo span{color:var(--jaune);}
+  .nav-back{color:rgba(255,255,255,0.5);text-decoration:none;font-size:0.8rem;letter-spacing:1px;display:flex;align-items:center;gap:6px;transition:color .2s;}
+  .nav-back:hover{color:var(--blanc);}
+  .sep{height:1px;background:linear-gradient(90deg,transparent,rgba(46,196,182,0.3),transparent);margin:0 2rem;}
+  .bloc{padding:3.5rem 2rem;max-width:800px;margin:0 auto;}
+  .bloc-header{display:flex;align-items:center;gap:16px;margin-bottom:2rem;}
+  .bloc-num{font-family:var(--font-titre);font-size:3rem;color:var(--seq-color);line-height:1;}
+  .bloc-tag{font-family:var(--font-mono);font-size:0.7rem;color:var(--vert);letter-spacing:2px;text-transform:uppercase;margin-bottom:2px;}
+  .bloc h2{font-family:var(--font-titre);font-size:2rem;letter-spacing:1px;}
+  .bloc p{font-size:0.95rem;color:rgba(255,255,255,0.7);line-height:1.8;margin-bottom:1rem;}
+  .mission-hero{padding:100px 2rem 3rem;max-width:800px;margin:0 auto;text-align:center;}
+  .mission-badge{display:inline-flex;align-items:center;gap:10px;background:rgba(46,196,182,0.15);border:1px solid rgba(46,196,182,0.4);border-radius:4px;padding:8px 20px;font-family:var(--font-mono);font-size:0.8rem;letter-spacing:2px;color:var(--vert);margin-bottom:2rem;}
+  .mission-title{font-family:var(--font-titre);font-size:clamp(3rem,8vw,6rem);line-height:1;letter-spacing:2px;margin-bottom:1rem;}
+  .mission-sub{font-size:1.1rem;color:rgba(255,255,255,0.6);line-height:1.7;}
+
+  /* OUTILS CARDS */
+  .outils-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.5rem;margin:2rem 0;}
+  .outil-card{background:var(--gris2);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:1.5rem;cursor:pointer;transition:all .3s;position:relative;overflow:hidden;}
+  .outil-card::after{content:'Ouvrir →';position:absolute;bottom:1rem;right:1.5rem;font-size:0.75rem;color:var(--seq-color);font-family:var(--font-mono);opacity:0;transition:opacity .2s;}
+  .outil-card:hover{border-color:var(--seq-color);transform:translateY(-3px);}
+  .outil-card:hover::after{opacity:1;}
+  .outil-icon{font-size:2rem;margin-bottom:1rem;display:block;}
+  .outil-name{font-family:var(--font-titre);font-size:1.4rem;color:var(--blanc);letter-spacing:1px;margin-bottom:0.5rem;}
+  .outil-url{font-family:var(--font-mono);font-size:0.7rem;color:var(--seq-color);margin-bottom:0.75rem;}
+  .outil-desc{font-size:0.82rem;color:rgba(255,255,255,0.55);line-height:1.6;}
+  .outil-tag{display:inline-block;background:rgba(46,196,182,0.12);border:1px solid rgba(46,196,182,0.25);color:var(--vert);padding:3px 10px;border-radius:20px;font-size:0.7rem;margin-top:0.75rem;font-family:var(--font-mono);}
+
+  /* CHECKLIST SIDIIEF */
+  .sidiief-container{background:var(--gris);border:1px solid rgba(255,214,10,0.2);border-radius:16px;padding:2rem;margin:2rem 0;}
+  .sidiief-title{font-family:var(--font-titre);font-size:2.5rem;color:var(--jaune);letter-spacing:3px;margin-bottom:0.5rem;}
+  .sidiief-sub{font-size:0.85rem;color:rgba(255,255,255,0.4);font-family:var(--font-mono);margin-bottom:2rem;}
+  .sidiief-item{display:flex;gap:16px;padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.06);align-items:flex-start;cursor:pointer;transition:all .2s;}
+  .sidiief-item:last-child{border-bottom:none;}
+  .sidiief-item:hover{padding-left:8px;}
+  .sidiief-letter{font-family:var(--font-titre);font-size:2.5rem;color:var(--jaune);line-height:1;width:40px;flex-shrink:0;}
+  .sidiief-content{}
+  .sidiief-mot{font-family:var(--font-titre);font-size:1.2rem;color:var(--blanc);letter-spacing:1px;margin-bottom:4px;}
+  .sidiief-question{font-size:0.85rem;color:rgba(255,255,255,0.6);line-height:1.5;}
+  .sidiief-check{width:24px;height:24px;border:1.5px solid rgba(255,214,10,0.3);border-radius:6px;flex-shrink:0;margin-left:auto;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+  .sidiief-item.checked .sidiief-check{background:var(--jaune);border-color:var(--jaune);}
+  .sidiief-item.checked .sidiief-check::after{content:'✓';color:#000;font-weight:700;font-size:0.9rem;}
+  .sidiief-item.checked .sidiief-letter{color:rgba(255,214,10,0.4);}
+  .sidiief-item.checked .sidiief-mot{color:rgba(255,255,255,0.4);}
+  .sidiief-progress{margin-top:1.5rem;}
+  .sp-text{font-family:var(--font-mono);font-size:0.75rem;color:rgba(255,255,255,0.4);margin-bottom:6px;}
+  .sp-bar{height:6px;border-radius:3px;background:rgba(255,255,255,0.08);overflow:hidden;}
+  .sp-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--jaune),var(--vert));transition:width .4s ease;width:0%;}
+
+  /* EXERCICE CAS PRATIQUE */
+  .cas-container{background:var(--gris2);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:2rem;margin:2rem 0;}
+  .cas-title{font-family:var(--font-titre);font-size:1.8rem;color:var(--blanc);margin-bottom:0.5rem;letter-spacing:1px;}
+  .cas-scenario{background:rgba(255,107,53,0.1);border:1px solid rgba(255,107,53,0.25);border-radius:8px;padding:1.25rem;margin:1.25rem 0;font-size:0.9rem;color:rgba(255,255,255,0.8);line-height:1.7;}
+  .cas-question{font-family:var(--font-titre);font-size:1.3rem;color:var(--jaune);margin:1.5rem 0 1rem;letter-spacing:1px;}
+  .cas-options{display:flex;flex-direction:column;gap:10px;}
+  .cas-option{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:12px 16px;cursor:pointer;font-size:0.9rem;text-align:left;color:var(--blanc);font-family:var(--font-body);transition:all .2s;}
+  .cas-option:hover{border-color:var(--seq-color);background:rgba(46,196,182,0.08);}
+  .cas-option.bon{border-color:var(--vert)!important;background:rgba(46,196,182,0.15)!important;}
+  .cas-option.mauvais{border-color:var(--rouge)!important;background:rgba(230,57,70,0.1)!important;}
+  .cas-feedback{margin-top:1rem;padding:1rem;border-radius:8px;font-size:0.88rem;line-height:1.6;display:none;}
+  .cas-feedback.show{display:block;}
+
+  /* MEMO */
+  .memo{background:var(--gris);border:1px solid rgba(46,196,182,0.25);border-radius:12px;padding:2rem;margin-top:2rem;}
+  .memo h3{font-family:var(--font-titre);font-size:2rem;color:var(--vert);margin-bottom:1.5rem;letter-spacing:1px;}
+  .tools-list{display:flex;flex-direction:column;gap:12px;}
+  .tool-row{display:flex;align-items:center;gap:12px;font-size:0.88rem;color:rgba(255,255,255,0.7);}
+  .tool-name{font-family:var(--font-mono);color:var(--vert);min-width:140px;}
+
+  .seq-nav{display:flex;justify-content:space-between;align-items:center;padding:3rem 2rem;max-width:800px;margin:0 auto;border-top:1px solid rgba(255,255,255,0.08);}
+  .btn-nav{background:transparent;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.7);padding:12px 24px;border-radius:8px;font-family:var(--font-body);font-size:0.9rem;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:all .2s;}
+  .btn-nav:hover{border-color:var(--seq-color);color:var(--blanc);}
+  .btn-nav-next{background:var(--seq-color);border-color:var(--seq-color);color:#000;}
+  .btn-nav-next:hover{background:#25a99e;color:#000;}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-logo">Détective<span>Info</span></a>
+  <a href="index.html" class="nav-back">← Retour à l'accueil</a>
+</nav>
+
+<section class="mission-hero">
+  <div class="mission-badge">// Mission 03 · Durée estimée : 30 min</div>
+  <h1 class="mission-title">L'ENQUÊTE</h1>
+  <p class="mission-sub">Utilise les mêmes outils que les journalistes professionnels pour vérifier une information en quelques minutes.</p>
+</section>
+<div class="sep"></div>
+
+<!-- BLOC 1 : OUTILS -->
+<div class="bloc">
+  <div class="bloc-header">
+    <div class="bloc-num">01</div>
+    <div class="bloc-info">
+      <div class="bloc-tag">// L'arsenal du fact-checker</div>
+      <h2>Les 5 outils essentiels</h2>
+    </div>
+  </div>
+  <p>Ces outils sont utilisés par les journalistes d'AFP, du Monde, de Libération. Ils sont tous gratuits et accessibles depuis ton téléphone ou ordinateur :</p>
+
+  <div class="outils-grid">
+    <div class="outil-card" onclick="window.open('https://lens.google.com','_blank')">
+      <span class="outil-icon">🔍</span>
+      <div class="outil-name">Google Lens</div>
+      <div class="outil-url">lens.google.com</div>
+      <div class="outil-desc">Recherche inversée d'image : télécharge une photo pour savoir d'où elle vient vraiment.</div>
+      <span class="outil-tag">Vérifier une image</span>
+    </div>
+    <div class="outil-card" onclick="window.open('https://www.lemonde.fr/verification/','_blank')">
+      <span class="outil-icon">📰</span>
+      <div class="outil-name">Décodex</div>
+      <div class="outil-url">lemonde.fr/verification</div>
+      <div class="outil-desc">Base de données du Monde qui évalue la fiabilité de centaines de sites d'information.</div>
+      <span class="outil-tag">Évaluer une source</span>
+    </div>
+    <div class="outil-card" onclick="window.open('https://factuel.afp.com','_blank')">
+      <span class="outil-icon">📡</span>
+      <div class="outil-name">AFP Factuel</div>
+      <div class="outil-url">factuel.afp.com</div>
+      <div class="outil-desc">L'équipe fact-checking de l'Agence France-Presse vérifie les rumeurs et fake news du moment.</div>
+      <span class="outil-tag">Rechercher une rumeur</span>
+    </div>
+    <div class="outil-card" onclick="window.open('https://www.liberation.fr/checknews/','_blank')">
+      <span class="outil-icon">✅</span>
+      <div class="outil-name">CheckNews</div>
+      <div class="outil-url">liberation.fr/checknews</div>
+      <div class="outil-desc">Le service de fact-checking de Libération — tu peux même leur envoyer une info à vérifier.</div>
+      <span class="outil-tag">Poser une question</span>
+    </div>
+    <div class="outil-card" onclick="window.open('https://web.archive.org','_blank')">
+      <span class="outil-icon">🗂️</span>
+      <div class="outil-name">Wayback Machine</div>
+      <div class="outil-url">web.archive.org</div>
+      <div class="outil-desc">Voir les anciennes versions d'un site — utile si le site a modifié ou supprimé un article.</div>
+      <span class="outil-tag">Retrouver l'original</span>
+    </div>
+  </div>
+</div>
+
+<!-- BLOC 2 : SIDIIEF -->
+<div class="bloc">
+  <div class="bloc-header">
+    <div class="bloc-num">02</div>
+    <div class="bloc-info">
+      <div class="bloc-tag">// La méthode universelle</div>
+      <h2>La checklist SIDIIEF</h2>
+    </div>
+  </div>
+  <p>Coche chaque point pour t'exercer à appliquer la méthode sur n'importe quelle information :</p>
+
+  <div class="sidiief-container">
+    <div class="sidiief-title">SIDIIEF</div>
+    <div class="sidiief-sub">// 6 questions à poser face à toute information</div>
+    <div class="sidiief-item" onclick="checkSIDIIEF(this)">
+      <div class="sidiief-letter">S</div>
+      <div class="sidiief-content">
+        <div class="sidiief-mot">Source</div>
+        <div class="sidiief-question">Quel est le site ou médias qui publie cette info ? Est-il connu, indépendant, fiable ? A-t-il une ligne éditoriale clairement affichée ?</div>
+      </div>
+      <div class="sidiief-check"></div>
+    </div>
+    <div class="sidiief-item" onclick="checkSIDIIEF(this)">
+      <div class="sidiief-letter">I</div>
+      <div class="sidiief-content">
+        <div class="sidiief-mot">Identité de l'auteur</div>
+        <div class="sidiief-question">Qui a écrit cet article ? Son nom est-il mentionné ? Peut-on trouver ses autres articles ? Est-il journaliste ?</div>
+      </div>
+      <div class="sidiief-check"></div>
+    </div>
+    <div class="sidiief-item" onclick="checkSIDIIEF(this)">
+      <div class="sidiief-letter">D</div>
+      <div class="sidiief-content">
+        <div class="sidiief-mot">Date</div>
+        <div class="sidiief-question">Quand a été publié cet article ? Une vieille info remise en circulation peut sembler actuelle. Attention aux captures d'écran sans date !</div>
+      </div>
+      <div class="sidiief-check"></div>
+    </div>
+    <div class="sidiief-item" onclick="checkSIDIIEF(this)">
+      <div class="sidiief-letter">I</div>
+      <div class="sidiief-content">
+        <div class="sidiief-mot">Images</div>
+        <div class="sidiief-question">Les images illustrent-elles vraiment les faits décrits ? Pas de photo ancienne ou sortie de contexte ? Utilise Google Lens pour vérifier !</div>
+      </div>
+      <div class="sidiief-check"></div>
+    </div>
+    <div class="sidiief-item" onclick="checkSIDIIEF(this)">
+      <div class="sidiief-letter">I</div>
+      <div class="sidiief-content">
+        <div class="sidiief-mot">Infos vérifiables</div>
+        <div class="sidiief-question">Les faits cités peuvent-ils être vérifiés ailleurs ? Y a-t-il des chiffres, des noms, des dates précis ? Des liens vers des études ?</div>
+      </div>
+      <div class="sidiief-check"></div>
+    </div>
+    <div class="sidiief-item" onclick="checkSIDIIEF(this)">
+      <div class="sidiief-letter">E</div>
+      <div class="sidiief-content">
+        <div class="sidiief-mot">Effet émotionnel</div>
+        <div class="sidiief-question">Cette info cherche-t-elle à te mettre en colère, à te faire peur ou à te surprendre ? Si oui, c'est un signal d'alarme. Prends du recul.</div>
+      </div>
+      <div class="sidiief-check"></div>
+    </div>
+    <div class="sidiief-item" onclick="checkSIDIIEF(this)">
+      <div class="sidiief-letter">F</div>
+      <div class="sidiief-content">
+        <div class="sidiief-mot">Fiabilité croisée</div>
+        <div class="sidiief-question">D'autres médias sérieux et indépendants confirment-ils cette information ? AFP Factuel, Le Monde, France Info... parlent-ils de la même chose ?</div>
+      </div>
+      <div class="sidiief-check"></div>
+    </div>
+    <div class="sidiief-progress">
+      <div class="sp-text" id="sidiief-prog-text">Points vérifiés : 0/7</div>
+      <div class="sp-bar"><div class="sp-fill" id="sidiief-prog-fill"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- BLOC 3 : CAS PRATIQUE -->
+<div class="bloc">
+  <div class="bloc-header">
+    <div class="bloc-num">03</div>
+    <div class="bloc-info">
+      <div class="bloc-tag">// Cas pratique</div>
+      <h2>À toi de jouer — enquête en 3 étapes</h2>
+    </div>
+  </div>
+
+  <div class="cas-container">
+    <div class="cas-title">Le cas de la photo choc</div>
+    <div class="cas-scenario">
+      Sur Instagram, tu vois une photo spectaculaire d'une inondation massive dans une ville française. Le texte dit : "AUJOURD'HUI à Paris — La Seine a envahi tout le centre-ville, catastrophe sans précédent !" La photo est partagée 40 000 fois en 2 heures.
+    </div>
+
+    <div class="cas-question" id="cas-q-title">Étape 1 : Que fais-tu EN PREMIER ?</div>
+    <div class="cas-options" id="cas-options">
+      <button class="cas-option" onclick="casPratique(this, false, '❌ Partager d\'abord = propager peut-être une fausse info à tous tes contacts. Même avec de bonnes intentions, c\'est ainsi que les fake news se propagent le plus vite.')">Je partage en ajoutant "Soyez prudents !"</button>
+      <button class="cas-option" onclick="casPratique(this, true, '✓ Parfait ! La recherche inversée d\'image est le premier réflexe. Tu glisses la photo dans Google Lens ou images.google.com pour voir si cette photo a déjà été publiée ailleurs, et quand.')">Je fais une recherche inversée de l'image avec Google Lens</button>
+      <button class="cas-option" onclick="casPratique(this, false, '❌ Le nombre de partages ne prouve rien. Souviens-toi : les fake news se propagent 3× plus vite que les vraies infos précisément parce que les gens partagent sans vérifier.')">Je regarde combien de personnes ont partagé — si c'est beaucoup, c'est fiable</button>
+      <button class="cas-option" onclick="casPratique(this, false, '❌ La recherche de commentaires ne suffit pas. Les commentaires peuvent aussi contenir de fausses informations ou être biaisés.')">Je lis les commentaires pour voir si d'autres doutent</button>
+    </div>
+    <div class="cas-feedback" id="cas-feedback"></div>
+    <button style="display:none;background:rgba(46,196,182,0.15);border:1px solid rgba(46,196,182,0.3);color:var(--vert);padding:10px 20px;border-radius:8px;font-family:var(--font-body);cursor:pointer;margin-top:1rem;" id="cas-next" onclick="casEtape2()">Étape suivante →</button>
+  </div>
+
+  <div id="cas2" style="display:none" class="cas-container">
+    <div class="cas-title">Résultat de la recherche d'image</div>
+    <div class="cas-scenario">
+      Google Lens te montre que cette photo date de 2010, prise lors d'une inondation en Australie. Elle n'a rien à voir avec Paris ni avec aujourd'hui. Le compte qui a publié ça a été créé il y a 3 semaines et n'a aucun abonné officiel.
+    </div>
+    <div class="cas-question">Étape 2 : Que conclus-tu ?</div>
+    <div class="cas-options">
+      <button class="cas-option" onclick="casPratique2(this,true,'✓ Exactement ! Tu as fait le travail d\'un vrai fact-checker. La photo est hors contexte, la source est douteuse, l\'info est fausse. Tu ne partages pas — et tu peux prévenir ceux qui t\'ont envoyé ce contenu.')">C'est une fake news — photo sortie de contexte, source inconnue, je ne partage pas</button>
+      <button class="cas-option" onclick="casPratique2(this,false,'❌ Le fait que 40 000 personnes ont partagé ne change rien. Tu as la preuve que la photo est fausse. Nombre de partages ≠ fiabilité.')">Peut-être que la photo est vieille mais l'inondation est réelle — 40 000 partages...</button>
+      <button class="cas-option" onclick="casPratique2(this,false,'❌ Si tu as déjà la preuve que c\'est faux, il n\'est pas nécessaire de chercher plus loin. Tu peux conclure.')">Je dois encore vérifier 5 autres sources avant de conclure</button>
+    </div>
+    <div class="cas-feedback" id="cas2-feedback"></div>
+  </div>
+</div>
+
+<!-- MÉMO -->
+<div class="bloc">
+  <div class="memo">
+    <h3>Mémo Mission 03</h3>
+    <div class="tools-list">
+      <div class="tool-row"><span class="tool-name">Google Lens</span>→ Vérifier l'origine d'une image ou d'une photo</div>
+      <div class="tool-row"><span class="tool-name">AFP Factuel</span>→ Chercher si une rumeur a déjà été démontée</div>
+      <div class="tool-row"><span class="tool-name">Décodex</span>→ Évaluer la fiabilité d'un site web</div>
+      <div class="tool-row"><span class="tool-name">CheckNews</span>→ Poser une question aux journalistes de Libération</div>
+      <div class="tool-row"><span class="tool-name">SIDIIEF</span>→ La méthode en 7 points pour toute information</div>
+    </div>
+  </div>
+</div>
+
+<div class="seq-nav">
+  <a href="sequence2.html" class="btn-nav">← Mission 02</a>
+  <span style="font-family:var(--font-mono);font-size:0.8rem;color:rgba(255,255,255,0.3)">Mission 3/5</span>
+  <a href="sequence4.html" class="btn-nav btn-nav-next">Mission 04 : Le Labo →</a>
+</div>
+
+<script>
+// SIDIIEF checklist
+let sidiief = 0;
+function checkSIDIIEF(item) {
+  if(item.classList.contains('checked')) {
+    item.classList.remove('checked'); sidiief--;
+  } else {
+    item.classList.add('checked'); sidiief++;
+  }
+  document.getElementById('sidiief-prog-text').textContent = 'Points vérifiés : '+sidiief+'/7';
+  document.getElementById('sidiief-prog-fill').style.width = (sidiief/7*100)+'%';
+}
+
+// CAS PRATIQUE
+let casAnswered = false;
+function casPratique(btn, correct, msg) {
+  if(casAnswered) return; casAnswered = true;
+  document.querySelectorAll('#cas-options .cas-option').forEach(b=>b.disabled=true);
+  btn.classList.add(correct ? 'bon' : 'mauvais');
+  const fb = document.getElementById('cas-feedback');
+  fb.style.background = correct ? 'rgba(46,196,182,0.12)' : 'rgba(230,57,70,0.1)';
+  fb.style.border = correct ? '1px solid #2ec4b6' : '1px solid #e63946';
+  fb.innerHTML = msg; fb.classList.add('show');
+  document.getElementById('cas-next').style.display = 'inline-block';
+}
+function casEtape2() {
+  document.getElementById('cas2').style.display='block';
+  document.getElementById('cas2').scrollIntoView({behavior:'smooth',block:'start'});
+}
+let cas2Answered=false;
+function casPratique2(btn, correct, msg) {
+  if(cas2Answered) return; cas2Answered=true;
+  document.querySelectorAll('#cas2 .cas-option').forEach(b=>b.disabled=true);
+  btn.classList.add(correct?'bon':'mauvais');
+  const fb = document.getElementById('cas2-feedback');
+  fb.style.background = correct ? 'rgba(46,196,182,0.12)' : 'rgba(230,57,70,0.1)';
+  fb.style.border = correct ? '1px solid #2ec4b6' : '1px solid #e63946';
+  fb.innerHTML = msg; fb.classList.add('show');
+  if(correct) {
+    setTimeout(()=>{
+      fb.innerHTML += '<br><br><strong style="color:#2ec4b6">🏆 Mission 03 accomplie !</strong> Tu maîtrises les outils du fact-checker. Place au Labo !';
+    },400);
+  }
+}
+</script>
+</body>
+</html>

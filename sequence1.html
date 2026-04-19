@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mission 01 — Le Piège | Détective Info</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@300;400;500;600;700&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --noir:#0a0a0f; --rouge:#e63946; --jaune:#ffd60a; --blanc:#f8f9fa;
+    --gris:#1a1a2e; --gris2:#16213e; --vert:#2ec4b6; --orange:#ff6b35;
+    --font-titre:'Bebas Neue',cursive; --font-body:'Space Grotesk',sans-serif; --font-mono:'Courier Prime',monospace;
+    --seq-color: #e63946;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--noir);color:var(--blanc);font-family:var(--font-body);overflow-x:hidden;}
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,10,15,0.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(230,57,70,0.3);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:60px;}
+  .nav-logo{font-family:var(--font-titre);font-size:1.6rem;color:var(--rouge);letter-spacing:2px;text-decoration:none;}
+  .nav-logo span{color:var(--jaune);}
+  .nav-back{color:rgba(255,255,255,0.5);text-decoration:none;font-size:0.8rem;letter-spacing:1px;display:flex;align-items:center;gap:6px;transition:color .2s;}
+  .nav-back:hover{color:var(--blanc);}
+
+  /* HERO MISSION */
+  .mission-hero{padding:100px 2rem 4rem;max-width:800px;margin:0 auto;text-align:center;}
+  .mission-badge{display:inline-flex;align-items:center;gap:10px;background:rgba(230,57,70,0.15);border:1px solid rgba(230,57,70,0.4);border-radius:4px;padding:8px 20px;font-family:var(--font-mono);font-size:0.8rem;letter-spacing:2px;color:var(--rouge);margin-bottom:2rem;}
+  .mission-num{font-family:var(--font-titre);font-size:8rem;line-height:1;color:rgba(230,57,70,0.15);position:absolute;left:50%;transform:translateX(-50%);top:80px;pointer-events:none;letter-spacing:-5px;}
+  .mission-title{font-family:var(--font-titre);font-size:clamp(3rem,8vw,6rem);line-height:1;letter-spacing:2px;margin-bottom:1rem;}
+  .mission-sub{font-size:1.1rem;color:rgba(255,255,255,0.6);line-height:1.7;}
+
+  /* BLOCS */
+  .bloc{padding:4rem 2rem;max-width:800px;margin:0 auto;}
+  .bloc-header{display:flex;align-items:center;gap:16px;margin-bottom:2rem;}
+  .bloc-num{font-family:var(--font-titre);font-size:3rem;color:var(--seq-color);line-height:1;}
+  .bloc-info{}
+  .bloc-tag{font-family:var(--font-mono);font-size:0.7rem;color:var(--vert);letter-spacing:2px;text-transform:uppercase;margin-bottom:2px;}
+  .bloc h2{font-family:var(--font-titre);font-size:2rem;letter-spacing:1px;}
+  .bloc p{font-size:0.95rem;color:rgba(255,255,255,0.7);line-height:1.8;margin-bottom:1rem;}
+
+  /* SEPARATEUR */
+  .sep{height:1px;background:linear-gradient(90deg,transparent,rgba(230,57,70,0.3),transparent);margin:0 2rem;}
+
+  /* JOURNAL SIMULÉ */
+  .journal-container{position:relative;}
+  .journal{background:#f5f0e8;color:#1a1a1a;border-radius:8px;padding:2rem;font-family:Georgia,serif;position:relative;overflow:hidden;}
+  .journal::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 28px,rgba(0,0,0,0.03) 28px,rgba(0,0,0,0.03) 29px);pointer-events:none;}
+  .journal-logo{font-family:var(--font-titre);font-size:2rem;letter-spacing:3px;text-align:center;border-bottom:3px double #1a1a1a;padding-bottom:0.5rem;margin-bottom:1rem;color:#1a1a1a;}
+  .journal-date{text-align:center;font-size:0.75rem;color:#555;margin-bottom:1.5rem;font-style:italic;}
+  .journal-titre{font-size:1.6rem;font-weight:bold;line-height:1.2;margin-bottom:0.5rem;color:#1a1a1a;}
+  .journal-soustitre{font-size:0.9rem;color:#333;margin-bottom:1rem;font-style:italic;}
+  .journal-body{font-size:0.85rem;color:#222;line-height:1.8;column-count:2;column-gap:1.5rem;}
+  @media(max-width:500px){.journal-body{column-count:1;}}
+
+  /* HOTSPOTS sur le journal */
+  .hotspot{cursor:pointer;position:relative;transition:all .2s;}
+  .hotspot::after{content:'?';position:absolute;top:-8px;right:-8px;width:18px;height:18px;background:var(--rouge);color:white;border-radius:50%;font-size:0.6rem;font-weight:bold;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;font-family:Arial;}
+  .hotspot:hover::after,.hotspot.actif::after{opacity:1;}
+  .hotspot.actif{background:rgba(255,214,10,0.3);border-radius:3px;}
+  .hotspot.resolu{background:rgba(230,57,70,0.2);border-radius:3px;}
+  .hotspot.resolu::after{content:'✓';background:var(--vert);}
+
+  /* PANEL EXPLICATION */
+  .explanation-panel{background:var(--gris2);border:1px solid var(--seq-color);border-radius:12px;padding:1.5rem;margin-top:1.5rem;display:none;}
+  .explanation-panel.show{display:block;animation:slideIn .3s ease;}
+  @keyframes slideIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  .exp-title{font-family:var(--font-titre);font-size:1.5rem;color:var(--seq-color);margin-bottom:0.75rem;}
+  .exp-body{font-size:0.9rem;color:rgba(255,255,255,0.75);line-height:1.7;}
+  .exp-regel{display:inline-flex;align-items:center;gap:6px;background:rgba(46,196,182,0.15);border:1px solid rgba(46,196,182,0.3);border-radius:20px;padding:4px 12px;font-size:0.8rem;color:var(--vert);margin-top:0.75rem;font-family:var(--font-mono);}
+
+  /* PROGRESS */
+  .progress-bar{background:rgba(255,255,255,0.08);border-radius:4px;height:6px;margin-bottom:2rem;overflow:hidden;}
+  .progress-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--rouge),var(--orange));transition:width .5s ease;width:20%;}
+  .progress-text{font-family:var(--font-mono);font-size:0.7rem;color:rgba(255,255,255,0.4);letter-spacing:1px;margin-bottom:6px;}
+
+  /* MÉMO FINAL */
+  .memo{background:var(--gris);border:1px solid rgba(255,214,10,0.25);border-radius:12px;padding:2rem;margin-top:2rem;}
+  .memo h3{font-family:var(--font-titre);font-size:2rem;color:var(--jaune);margin-bottom:1.5rem;letter-spacing:1px;}
+  .memo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;}
+  .memo-item{background:rgba(255,255,255,0.05);border-radius:8px;padding:1rem;text-align:center;}
+  .memo-emoji{font-size:1.5rem;margin-bottom:0.5rem;display:block;}
+  .memo-label{font-size:0.8rem;color:rgba(255,255,255,0.7);line-height:1.4;}
+
+  /* NAVIGATION SÉQUENCES */
+  .seq-nav{display:flex;justify-content:space-between;align-items:center;padding:3rem 2rem;max-width:800px;margin:0 auto;border-top:1px solid rgba(255,255,255,0.08);}
+  .btn-nav{background:transparent;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.7);padding:12px 24px;border-radius:8px;font-family:var(--font-body);font-size:0.9rem;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:all .2s;}
+  .btn-nav:hover{border-color:var(--seq-color);color:var(--blanc);}
+  .btn-nav-next{background:var(--seq-color);border-color:var(--seq-color);color:white;}
+  .btn-nav-next:hover{background:#c1121f;border-color:#c1121f;color:white;}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">Détective<span>Info</span></a>
+  <a href="index.html" class="nav-back">← Retour à l'accueil</a>
+</nav>
+
+<section class="mission-hero" style="position:relative;">
+  <div class="mission-badge">// Mission 01 · Durée estimée : 20 min</div>
+  <h1 class="mission-title">LE PIÈGE</h1>
+  <p class="mission-sub">Analyse cette fausse une de journal et trouve les 5 indices qui trahissent une fake news.</p>
+</section>
+
+<div class="sep"></div>
+
+<!-- BLOC 1 : ACCROCHE -->
+<div class="bloc">
+  <div class="bloc-header">
+    <div class="bloc-num">01</div>
+    <div class="bloc-info">
+      <div class="bloc-tag">// Mise en situation</div>
+      <h2>Le contexte de l'enquête</h2>
+    </div>
+  </div>
+  <p>Tu fais partie de l'équipe de rédaction du journal de ton collège. On vous envoie un article qui circule sur les réseaux sociaux — des centaines d'élèves l'ont déjà partagé.</p>
+  <p>Ton chef de rubrique te demande : <strong style="color:var(--jaune)">"Est-ce qu'on peut publier ça ?"</strong> À toi de trouver les preuves que c'est une fake news avant qu'il soit trop tard.</p>
+</div>
+
+<!-- BLOC 2 : JOURNAL INTERACTIF -->
+<div class="bloc">
+  <div class="bloc-header">
+    <div class="bloc-num">02</div>
+    <div class="bloc-info">
+      <div class="bloc-tag">// Activité principale</div>
+      <h2>Clique sur les éléments suspects</h2>
+    </div>
+  </div>
+
+  <div class="progress-text" id="prog-text">Indices trouvés : 0/5</div>
+  <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+
+  <div class="journal-container">
+    <div class="journal">
+      <div class="journal-logo">Le Quotidien des Ados</div>
+      <div class="journal-date"><span class="hotspot" id="hs-date" data-id="date" onclick="clickHotspot('date')">Publié aujourd'hui à 00h01</span> — Aucun auteur mentionné</div>
+      <div class="journal-titre hotspot" id="hs-titre" data-id="titre" onclick="clickHotspot('titre')">🚨 URGENT : L'OMS INTERDIT le smartphone pour les moins de 18 ans dès cette semaine</div>
+      <div class="journal-soustitre">Une décision choc qui va bouleverser la vie de tous les adolescents</div>
+      <div class="journal-body">
+        Selon <span class="hotspot" id="hs-source" data-id="source" onclick="clickHotspot('source')">des scientifiques du monde entier</span>, les smartphones provoqueraient chez les jeunes une maladie appelée "Digital Brain Freeze" touchant déjà <span class="hotspot" id="hs-chiffre" data-id="chiffre" onclick="clickHotspot('chiffre')">99,7% des adolescents en France</span>. L'Organisation Mondiale de la Santé aurait signé un décret ultra-confidentiel interdisant l'usage de tout écran aux moins de 18 ans.
+        <br><br>
+        Les parents recevront bientôt une amende de 2 000 euros si leur enfant utilise un téléphone. <span class="hotspot" id="hs-partage" data-id="partage" onclick="clickHotspot('partage')">⚠ PARTAGE CET ARTICLE IMMÉDIATEMENT à tous tes contacts pour les prévenir !</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="explanation-panel" id="exp-titre">
+    <div class="exp-title">🚨 Titre alarmiste</div>
+    <div class="exp-body">Le mot "URGENT" en majuscules et "dès cette semaine" cherchent à te mettre en état de panique pour que tu partages sans réfléchir. Les vrais journalistes évitent les titres qui jouent sur la peur.</div>
+    <span class="exp-regel">✓ Règle n°1 : Méfie-toi des titres qui créent l'urgence ou la peur</span>
+  </div>
+  <div class="explanation-panel" id="exp-source">
+    <div class="exp-title">❓ Source vague</div>
+    <div class="exp-body">"Des scientifiques du monde entier" — qui exactement ? Aucun nom, aucun lien vers une étude, aucune institution précise. Une source fiable donne toujours des détails vérifiables.</div>
+    <span class="exp-regel">✓ Règle n°2 : Vérifie toujours qui a dit quoi et où</span>
+  </div>
+  <div class="explanation-panel" id="exp-chiffre">
+    <div class="exp-title">📊 Chiffre invérifiable</div>
+    <div class="exp-body">99,7% — un chiffre ultra-précis qui paraît officiel mais qu'on ne peut pas vérifier. Les fausses informations utilisent souvent des statistiques impressionnantes pour paraître crédibles.</div>
+    <span class="exp-regel">✓ Règle n°3 : Cherche la source des chiffres cités</span>
+  </div>
+  <div class="explanation-panel" id="exp-partage">
+    <div class="exp-title">📢 Appel à partager</div>
+    <div class="exp-body">L'injonction "PARTAGE IMMÉDIATEMENT" est une technique classique de propagation virale. Elle joue sur ton sentiment d'urgence pour t'empêcher de réfléchir et vérifier.</div>
+    <span class="exp-regel">✓ Règle n°4 : Plus on te presse de partager, plus il faut douter</span>
+  </div>
+  <div class="explanation-panel" id="exp-date">
+    <div class="exp-title">📅 Date suspecte</div>
+    <div class="exp-body">"Publié aujourd'hui à 00h01" et aucun auteur — une information sérieuse cite toujours un journaliste responsable et une date précise vérifiable. L'anonymat est un signal d'alarme.</div>
+    <span class="exp-regel">✓ Règle n°5 : Cherche toujours qui signe l'article</span>
+  </div>
+
+  <div id="felicitations" style="display:none; background:rgba(46,196,182,0.12); border:1px solid var(--vert); border-radius:12px; padding:2rem; margin-top:1.5rem; text-align:center;">
+    <div style="font-family:var(--font-titre);font-size:3rem;color:var(--vert);margin-bottom:0.5rem;">DOSSIER RÉSOLU !</div>
+    <p style="color:rgba(255,255,255,0.7)">Tu as trouvé les 5 indices. En tant que journaliste, tu refuserais de publier cet article. Continue vers la Séquence 2 !</p>
+  </div>
+</div>
+
+<!-- BLOC 3 : MEMO -->
+<div class="bloc">
+  <div class="bloc-header">
+    <div class="bloc-num">03</div>
+    <div class="bloc-info">
+      <div class="bloc-tag">// À retenir</div>
+      <h2>Les 5 signaux d'alarme</h2>
+    </div>
+  </div>
+  <div class="memo">
+    <h3>Mémo du Détective</h3>
+    <div class="memo-grid">
+      <div class="memo-item">
+        <span class="memo-emoji">🔴</span>
+        <div class="memo-label">Titre choquant ou alarmiste</div>
+      </div>
+      <div class="memo-item">
+        <span class="memo-emoji">❓</span>
+        <div class="memo-label">Source vague ou absente</div>
+      </div>
+      <div class="memo-item">
+        <span class="memo-emoji">📊</span>
+        <div class="memo-label">Chiffres invérifiables</div>
+      </div>
+      <div class="memo-item">
+        <span class="memo-emoji">📢</span>
+        <div class="memo-label">Injonction à partager vite</div>
+      </div>
+      <div class="memo-item">
+        <span class="memo-emoji">👤</span>
+        <div class="memo-label">Auteur anonyme</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NAVIGATION -->
+<div class="seq-nav">
+  <a href="index.html" class="btn-nav">← Accueil</a>
+  <span style="font-family:var(--font-mono);font-size:0.8rem;color:rgba(255,255,255,0.3)">Mission 1/5</span>
+  <a href="sequence2.html" class="btn-nav btn-nav-next">Mission 02 : L'Émotion →</a>
+</div>
+
+<script>
+const explications = {
+  'titre': 'exp-titre',
+  'source': 'exp-source',
+  'chiffre': 'exp-chiffre',
+  'partage': 'exp-partage',
+  'date': 'exp-date'
+};
+let trouves = 0;
+let actif = null;
+
+function clickHotspot(id) {
+  const el = document.getElementById('hs-' + id);
+  // Fermer l'explication précédente si c'est le même
+  if(actif === id) {
+    document.getElementById(explications[id]).classList.remove('show');
+    el.classList.remove('actif');
+    actif = null;
+    return;
+  }
+  // Fermer l'ancien
+  if(actif) {
+    document.getElementById(explications[actif]).classList.remove('show');
+    const oldEl = document.getElementById('hs-' + actif);
+    if(!oldEl.classList.contains('resolu')) oldEl.classList.remove('actif');
+  }
+  // Marquer comme trouvé si nouveau
+  if(!el.classList.contains('resolu')) {
+    el.classList.remove('actif');
+    el.classList.add('resolu');
+    trouves++;
+    const pct = (trouves / 5) * 100;
+    document.getElementById('prog-fill').style.width = pct + '%';
+    document.getElementById('prog-text').textContent = 'Indices trouvés : ' + trouves + '/5';
+    if(trouves >= 5) {
+      setTimeout(() => { document.getElementById('felicitations').style.display = 'block'; }, 400);
+    }
+  }
+  document.getElementById(explications[id]).classList.add('show');
+  actif = id;
+}
+</script>
+</body>
+</html>

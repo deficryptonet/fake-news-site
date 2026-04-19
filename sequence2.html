@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mission 02 — L'Émotion | Détective Info</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@300;400;500;600;700&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --noir:#0a0a0f; --rouge:#e63946; --jaune:#ffd60a; --blanc:#f8f9fa;
+    --gris:#1a1a2e; --gris2:#16213e; --vert:#2ec4b6; --orange:#ff6b35;
+    --seq-color:#ff6b35;
+    --font-titre:'Bebas Neue',cursive; --font-body:'Space Grotesk',sans-serif; --font-mono:'Courier Prime',monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--noir);color:var(--blanc);font-family:var(--font-body);overflow-x:hidden;}
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,10,15,0.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,107,53,0.3);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:60px;}
+  .nav-logo{font-family:var(--font-titre);font-size:1.6rem;color:var(--rouge);letter-spacing:2px;text-decoration:none;}
+  .nav-logo span{color:var(--jaune);}
+  .nav-back{color:rgba(255,255,255,0.5);text-decoration:none;font-size:0.8rem;letter-spacing:1px;display:flex;align-items:center;gap:6px;transition:color .2s;}
+  .nav-back:hover{color:var(--blanc);}
+  .sep{height:1px;background:linear-gradient(90deg,transparent,rgba(255,107,53,0.3),transparent);margin:0 2rem;}
+  .bloc{padding:3.5rem 2rem;max-width:800px;margin:0 auto;}
+  .bloc-header{display:flex;align-items:center;gap:16px;margin-bottom:2rem;}
+  .bloc-num{font-family:var(--font-titre);font-size:3rem;color:var(--seq-color);line-height:1;}
+  .bloc-tag{font-family:var(--font-mono);font-size:0.7rem;color:var(--vert);letter-spacing:2px;text-transform:uppercase;margin-bottom:2px;}
+  .bloc h2{font-family:var(--font-titre);font-size:2rem;letter-spacing:1px;}
+  .bloc p{font-size:0.95rem;color:rgba(255,255,255,0.7);line-height:1.8;margin-bottom:1rem;}
+
+  /* HERO */
+  .mission-hero{padding:100px 2rem 3rem;max-width:800px;margin:0 auto;text-align:center;}
+  .mission-badge{display:inline-flex;align-items:center;gap:10px;background:rgba(255,107,53,0.15);border:1px solid rgba(255,107,53,0.4);border-radius:4px;padding:8px 20px;font-family:var(--font-mono);font-size:0.8rem;letter-spacing:2px;color:var(--orange);margin-bottom:2rem;}
+  .mission-title{font-family:var(--font-titre);font-size:clamp(3rem,8vw,6rem);line-height:1;letter-spacing:2px;margin-bottom:1rem;}
+  .mission-sub{font-size:1.1rem;color:rgba(255,255,255,0.6);line-height:1.7;}
+
+  /* CERVEAU INTERACTIF */
+  .cerveau-container{background:var(--gris2);border:1px solid rgba(255,107,53,0.2);border-radius:16px;padding:2rem;margin:2rem 0;}
+  .cerveau-scene{position:relative;text-align:center;padding:2rem 0;}
+  .cerveau-svg{max-width:300px;margin:0 auto;display:block;}
+  .zone-cerveau{cursor:pointer;transition:all .3s;}
+  .zone-cerveau:hover rect,.zone-cerveau:hover ellipse{opacity:0.9;}
+  .zone-cerveau.active rect,.zone-cerveau.active ellipse{filter:drop-shadow(0 0 8px currentColor);}
+
+  /* PANNEAU INFO CERVEAU */
+  .cerveau-info{background:rgba(255,107,53,0.1);border:1px solid rgba(255,107,53,0.3);border-radius:12px;padding:1.5rem;margin-top:1.5rem;min-height:120px;}
+  .ci-title{font-family:var(--font-titre);font-size:1.5rem;color:var(--orange);margin-bottom:0.75rem;}
+  .ci-body{font-size:0.9rem;color:rgba(255,255,255,0.75);line-height:1.7;}
+
+  /* BIAIS QUIZ */
+  .biais-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0;}
+  @media(max-width:500px){.biais-grid{grid-template-columns:1fr;}}
+  .biais-card{background:var(--gris2);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1.5rem;cursor:pointer;transition:all .3s;position:relative;overflow:hidden;}
+  .biais-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--seq-color);transform:scaleX(0);transition:transform .3s;}
+  .biais-card:hover::before{transform:scaleX(1);}
+  .biais-card:hover{border-color:rgba(255,107,53,0.4);transform:translateY(-2px);}
+  .biais-card.revealed{border-color:var(--seq-color);}
+  .biais-nom{font-family:var(--font-titre);font-size:1.3rem;color:var(--blanc);margin-bottom:0.5rem;letter-spacing:1px;}
+  .biais-desc{font-size:0.85rem;color:rgba(255,255,255,0.55);line-height:1.5;}
+  .biais-exemple{display:none;margin-top:1rem;padding-top:1rem;border-top:1px solid rgba(255,107,53,0.2);font-size:0.85rem;color:var(--orange);line-height:1.5;}
+  .biais-card.revealed .biais-exemple{display:block;}
+
+  /* EMOTIONS SLIDER */
+  .emotion-test{background:var(--gris);border-radius:16px;padding:2rem;margin:2rem 0;}
+  .et-titre{font-family:var(--font-titre);font-size:1.8rem;color:var(--jaune);margin-bottom:1.5rem;letter-spacing:1px;}
+  .headline-display{background:var(--gris2);border-radius:8px;padding:1.5rem;margin:1.5rem 0;font-size:1.1rem;font-weight:600;line-height:1.4;min-height:80px;display:flex;align-items:center;transition:all .4s;}
+  .emotion-meter{margin:1rem 0;}
+  .em-label{font-family:var(--font-mono);font-size:0.75rem;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;}
+  .em-bar{height:8px;border-radius:4px;background:rgba(255,255,255,0.08);overflow:hidden;margin-bottom:4px;}
+  .em-fill{height:100%;border-radius:4px;transition:width .6s ease;}
+  .btn-headline{background:rgba(255,107,53,0.15);border:1px solid rgba(255,107,53,0.3);color:var(--orange);padding:10px 24px;border-radius:8px;font-family:var(--font-body);font-size:0.9rem;cursor:pointer;transition:all .2s;margin-top:1rem;}
+  .btn-headline:hover{background:rgba(255,107,53,0.3);}
+
+  /* THERMOMETRE EMOTIONS */
+  .thermo-row{display:flex;gap:12px;flex-wrap:wrap;margin:1.5rem 0;}
+  .thermo-item{background:var(--gris2);border-radius:8px;padding:10px 16px;font-size:0.85rem;display:flex;align-items:center;gap:8px;cursor:pointer;border:1px solid rgba(255,255,255,0.08);transition:all .2s;}
+  .thermo-item:hover,.thermo-item.sel{border-color:var(--seq-color);background:rgba(255,107,53,0.12);}
+  .thermo-dot{width:10px;height:10px;border-radius:50%;background:var(--seq-color);}
+
+  /* MÉMO */
+  .memo{background:var(--gris);border:1px solid rgba(255,214,10,0.25);border-radius:12px;padding:2rem;margin-top:2rem;}
+  .memo h3{font-family:var(--font-titre);font-size:2rem;color:var(--jaune);margin-bottom:1.5rem;letter-spacing:1px;}
+  .memo-list{list-style:none;}
+  .memo-list li{padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:0.9rem;color:rgba(255,255,255,0.75);display:flex;gap:12px;line-height:1.5;}
+  .memo-list li:last-child{border-bottom:none;}
+  .memo-list li::before{content:'→';color:var(--seq-color);font-weight:700;flex-shrink:0;}
+
+  /* NAV */
+  .seq-nav{display:flex;justify-content:space-between;align-items:center;padding:3rem 2rem;max-width:800px;margin:0 auto;border-top:1px solid rgba(255,255,255,0.08);}
+  .btn-nav{background:transparent;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.7);padding:12px 24px;border-radius:8px;font-family:var(--font-body);font-size:0.9rem;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:all .2s;}
+  .btn-nav:hover{border-color:var(--seq-color);color:var(--blanc);}
+  .btn-nav-next{background:var(--seq-color);border-color:var(--seq-color);color:white;}
+  .btn-nav-next:hover{background:#e05520;color:white;}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-logo">Détective<span>Info</span></a>
+  <a href="index.html" class="nav-back">← Retour à l'accueil</a>
+</nav>
+
+<section class="mission-hero">
+  <div class="mission-badge">// Mission 02 · Durée estimée : 25 min</div>
+  <h1 class="mission-title">L'ÉMOTION</h1>
+  <p class="mission-sub">Pourquoi ton cerveau est-il programmé pour croire les fake news ? Découvre les mécanismes de la manipulation émotionnelle.</p>
+</section>
+<div class="sep"></div>
+
+<!-- BLOC 1 : LE CERVEAU -->
+<div class="bloc">
+  <div class="bloc-header">
+    <div class="bloc-num">01</div>
+    <div class="bloc-info">
+      <div class="bloc-tag">// Découverte</div>
+      <h2>Dans ta tête quand tu lis une info</h2>
+    </div>
+  </div>
+  <p>Quand tu lis une information en ligne, deux parties de ton cerveau entrent en jeu. Clique sur chaque zone pour comprendre ce qui se passe :</p>
+
+  <div class="cerveau-container">
+    <div class="cerveau-scene">
+      <svg class="cerveau-svg" viewBox="0 0 300 220" xmlns="http://www.w3.org/2000/svg">
+        <!-- Cerveau simplifié -->
+        <ellipse cx="150" cy="100" rx="120" ry="85" fill="rgba(255,107,53,0.08)" stroke="rgba(255,107,53,0.3)" stroke-width="1.5"/>
+        <!-- Zone émotionnelle (amygdale) -->
+        <g class="zone-cerveau" id="zone-emotion" onclick="showZone('emotion')" style="color:#e63946">
+          <ellipse cx="110" cy="130" rx="45" ry="30" fill="rgba(230,57,70,0.25)" stroke="#e63946" stroke-width="1.5"/>
+          <text x="110" y="125" text-anchor="middle" font-family="Space Grotesk" font-size="10" fill="#e63946" font-weight="600">Zone émotionnelle</text>
+          <text x="110" y="138" text-anchor="middle" font-family="Courier Prime" font-size="8" fill="rgba(230,57,70,0.7)">(amygdale)</text>
+        </g>
+        <!-- Zone rationnelle (cortex) -->
+        <g class="zone-cerveau" id="zone-rational" onclick="showZone('rational')" style="color:#2ec4b6">
+          <ellipse cx="190" cy="75" rx="55" ry="32" fill="rgba(46,196,182,0.2)" stroke="#2ec4b6" stroke-width="1.5"/>
+          <text x="190" y="70" text-anchor="middle" font-family="Space Grotesk" font-size="10" fill="#2ec4b6" font-weight="600">Zone rationnelle</text>
+          <text x="190" y="83" text-anchor="middle" font-family="Courier Prime" font-size="8" fill="rgba(46,196,182,0.7)">(cortex préfrontal)</text>
+        </g>
+        <!-- Flèche entre les deux -->
+        <path d="M148 105 Q150 95 165 90" stroke="rgba(255,214,10,0.5)" stroke-width="1.5" fill="none" stroke-dasharray="4 3" marker-end="url(#arr2)"/>
+        <defs>
+          <marker id="arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="#ffd60a" stroke-width="1.5" stroke-linecap="round"/>
+          </marker>
+        </defs>
+        <text x="150" y="200" text-anchor="middle" font-family="Courier Prime" font-size="9" fill="rgba(255,255,255,0.3)">↑ Clique sur une zone</text>
+      </svg>
+    </div>
+    <div class="cerveau-info" id="cerveau-info">
+      <div class="ci-title">👆 Clique sur une zone du cerveau</div>
+      <div class="ci-body">Sélectionne la zone émotionnelle ou rationnelle pour comprendre le rôle de chacune face aux fake news.</div>
+    </div>
+  </div>
+</div>
+
+<!-- BLOC 2 : BIAIS -->
+<div class="bloc">
+  <div class="bloc-header">
+    <div class="bloc-num">02</div>
+    <div class="bloc-info">
+      <div class="bloc-tag">// Les pièges mentaux</div>
+      <h2>4 biais qui te font tomber dans le piège</h2>
+    </div>
+  </div>
+  <p>Un <strong style="color:var(--jaune)">biais cognitif</strong> est une "erreur de raisonnement" que notre cerveau fait automatiquement. Clique sur chaque biais pour voir un exemple concret :</p>
+
+  <div class="biais-grid">
+    <div class="biais-card" onclick="toggleBiais(this)">
+      <div class="biais-nom">Biais de confirmation</div>
+      <div class="biais-desc">On croit plus facilement ce qui confirme ce qu'on pense déjà.</div>
+      <div class="biais-exemple">💡 Exemple : Tu penses que les devoirs sont inutiles. Tu lis un article qui dit "Les devoirs nuisent à la santé" — tu le crois sans vérifier, parce que ça confirme ton avis.</div>
+    </div>
+    <div class="biais-card" onclick="toggleBiais(this)">
+      <div class="biais-nom">Effet de vérité</div>
+      <div class="biais-desc">Une info répétée souvent finit par sembler vraie, même si elle est fausse.</div>
+      <div class="biais-exemple">💡 Exemple : Si tu vois 10 fois la même rumeur sur différents comptes, ton cerveau commence à penser "il doit y avoir du vrai là-dedans". C'est exactement ce que veulent les créateurs de fake news.</div>
+    </div>
+    <div class="biais-card" onclick="toggleBiais(this)">
+      <div class="biais-nom">Biais émotionnel</div>
+      <div class="biais-desc">La peur, la colère ou la surprise désactivent notre sens critique.</div>
+      <div class="biais-exemple">💡 Exemple : Un titre "DANGER : Ce que ton école te cache !" va provoquer de la peur ou de la colère. Dans cet état, ton cerveau analyse moins bien l'information.</div>
+    </div>
+    <div class="biais-card" onclick="toggleBiais(this)">
+      <div class="biais-nom">Biais de groupe</div>
+      <div class="biais-desc">Si tout le monde autour de toi croit quelque chose, tu auras tendance à y croire aussi.</div>
+      <div class="biais-exemple">💡 Exemple : 500 personnes ont partagé un post. Ton cerveau se dit "autant de gens ne peuvent pas se tromper". Mais si la première personne s'est trompée, tout le monde a suivi.</div>
+    </div>
+  </div>
+</div>
+
+<!-- BLOC 3 : TESTEUR DE TITRES -->
+<div class="bloc">
+  <div class="bloc-header">
+    <div class="bloc-num">03</div>
+    <div class="bloc-info">
+      <div class="bloc-tag">// Activité interactive</div>
+      <h2>Le thermomètre émotionnel</h2>
+    </div>
+  </div>
+  <p>Voici un titre d'article. Identifie l'émotion principale qu'il cherche à provoquer — puis clique pour voir la réponse :</p>
+
+  <div class="emotion-test">
+    <div class="et-titre">📰 Quel titre cherche à te manipuler ?</div>
+    <div class="headline-display" id="headline-text">
+      "Des scientifiques découvrent que les jeux vidéo rendent les enfants violents — les chiffres sont alarmants"
+    </div>
+    <div class="thermo-row" id="thermo-options">
+      <div class="thermo-item" onclick="checkEmotion(this,'peur')"><div class="thermo-dot" style="background:#e63946"></div>Peur</div>
+      <div class="thermo-item" onclick="checkEmotion(this,'colere')"><div class="thermo-dot" style="background:#ff6b35"></div>Colère</div>
+      <div class="thermo-item" onclick="checkEmotion(this,'joie')"><div class="thermo-dot" style="background:#ffd60a"></div>Joie</div>
+      <div class="thermo-item" onclick="checkEmotion(this,'surprise')"><div class="thermo-dot" style="background:#2ec4b6"></div>Surprise</div>
+    </div>
+    <div id="emotion-feedback" style="display:none;margin-top:1rem;padding:1rem;border-radius:8px;font-size:0.9rem;line-height:1.6;"></div>
+    <button class="btn-headline" onclick="nextHeadline()" id="next-btn" style="display:none">Titre suivant →</button>
+    <div class="emotion-meter" style="margin-top:1.5rem;">
+      <div class="em-label">Titre n°<span id="headline-num">1</span>/4</div>
+      <div class="em-bar"><div class="em-fill" id="em-progress" style="width:25%;background:linear-gradient(90deg,var(--rouge),var(--orange))"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- BLOC 4 : MÉMO -->
+<div class="bloc">
+  <div class="memo">
+    <h3>Mémo Mission 02</h3>
+    <ul class="memo-list">
+      <li>Les fake news ciblent d'abord tes émotions (peur, colère, indignation) — pas ta raison</li>
+      <li>Quand tu ressens une forte émotion face à une info, c'est le signal de ralentir et vérifier</li>
+      <li>La répétition d'une info ne la rend pas vraie — cherche des sources indépendantes</li>
+      <li>Méfie-toi des infos qui confirment exactement ce que tu penses déjà</li>
+      <li>Le fait que "tout le monde partage" ne prouve rien sur la fiabilité d'une info</li>
+    </ul>
+  </div>
+</div>
+
+<div class="seq-nav">
+  <a href="sequence1.html" class="btn-nav">← Mission 01</a>
+  <span style="font-family:var(--font-mono);font-size:0.8rem;color:rgba(255,255,255,0.3)">Mission 2/5</span>
+  <a href="sequence3.html" class="btn-nav btn-nav-next">Mission 03 : L'Enquête →</a>
+</div>
+
+<script>
+// CERVEAU
+const zonesData = {
+  emotion: {
+    title: '🔴 Zone émotionnelle — L\'amygdale',
+    body: 'L\'amygdale réagit en quelques millisecondes, bien avant que tu puisses réfléchir. C\'est elle qui déclenche la peur, la colère ou la joie face à une information. Les créateurs de fake news ciblent directement cette zone — si tu ressens une forte émotion, ton cerveau analyse moins bien ce qu\'il lit.'
+  },
+  rational: {
+    title: '🟢 Zone rationnelle — Le cortex préfrontal',
+    body: 'Le cortex préfrontal est la partie "raisonnement" de ton cerveau. Il peut analyser, vérifier, questionner — mais il est plus lent que l\'amygdale. Quand l\'émotion est trop forte, la zone rationnelle est "court-circuitée". C\'est pourquoi il faut toujours prendre le temps de souffler avant de partager une information qui t\'a beaucoup ému.'
+  }
+};
+function showZone(zone) {
+  document.querySelectorAll('.zone-cerveau').forEach(z => z.classList.remove('active'));
+  document.getElementById('zone-' + zone).classList.add('active');
+  const d = zonesData[zone];
+  document.getElementById('cerveau-info').innerHTML = `<div class="ci-title">${d.title}</div><div class="ci-body">${d.body}</div>`;
+}
+
+// BIAIS
+function toggleBiais(card) {
+  card.classList.toggle('revealed');
+}
+
+// HEADLINES
+const headlines = [
+  { text: '"Des scientifiques découvrent que les jeux vidéo rendent les enfants violents — les chiffres sont alarmants"', correctEmotion: 'peur', explication: '✓ Ce titre joue sur la <strong>peur</strong> des parents et des ados. "Alarmants" et "violents" sont des mots chargés émotionnellement pour te faire réagir sans réfléchir. Une vraie étude scientifique ne s\'exprime pas ainsi.' },
+  { text: '"SCANDALE : Des enseignants espionnent les téléphones des élèves pendant les examens !"', correctEmotion: 'colere', explication: '✓ Ce titre cherche à provoquer la <strong>colère</strong>. Le mot "SCANDALE" en majuscules et le point d\'exclamation sont des techniques de manipulation classiques. Avant de s\'indigner, cherche la source !' },
+  { text: '"INCROYABLE : Un élève de 13 ans gagne 1 million d\'euros grâce à un jeu en ligne"', correctEmotion: 'surprise', explication: '✓ Ce titre joue sur la <strong>surprise</strong> et la curiosité. L\'incrédulité nous pousse à cliquer pour "voir si c\'est vrai". C\'est souvent une technique pour générer des clics (clickbait), pas pour informer.' },
+  { text: '"Un chercheur affirme que les réseaux sociaux sont pires pour la santé que le tabac"', correctEmotion: 'peur', explication: '✓ Ce titre joue encore sur la <strong>peur</strong>. La comparaison avec le tabac est une technique de dramatisation. Qui est ce chercheur ? Quelle étude ? Ces questions sont absentes pour te faire réagir vite.' }
+];
+let currentHL = 0;
+let emotionAnswered = false;
+
+function checkEmotion(el, emotion) {
+  if(emotionAnswered) return;
+  emotionAnswered = true;
+  document.querySelectorAll('.thermo-item').forEach(t => t.style.pointerEvents='none');
+  const hl = headlines[currentHL];
+  const fb = document.getElementById('emotion-feedback');
+  if(emotion === hl.correctEmotion) {
+    el.style.background='rgba(46,196,182,0.2)'; el.style.borderColor='#2ec4b6'; el.style.color='#2ec4b6';
+    fb.style.background='rgba(46,196,182,0.12)'; fb.style.border='1px solid #2ec4b6';
+  } else {
+    el.style.background='rgba(230,57,70,0.15)'; el.style.borderColor='#e63946'; el.style.color='#e63946';
+    fb.style.background='rgba(255,107,53,0.12)'; fb.style.border='1px solid rgba(255,107,53,0.4)';
+  }
+  fb.innerHTML = hl.explication;
+  fb.style.display='block';
+  document.getElementById('next-btn').style.display='inline-flex';
+}
+
+function nextHeadline() {
+  currentHL++;
+  if(currentHL >= headlines.length) {
+    document.querySelector('.emotion-test').innerHTML += '<div style="background:rgba(46,196,182,0.12);border:1px solid #2ec4b6;border-radius:12px;padding:1.5rem;margin-top:1rem;text-align:center"><div style="font-family:Bebas Neue,cursive;font-size:2rem;color:#2ec4b6;letter-spacing:1px">MISSION ACCOMPLIE !</div><p style="color:rgba(255,255,255,0.7);margin-top:.5rem">Tu sais maintenant reconnaître les émotions ciblées par les fake news. Continue vers la Mission 3 !</p></div>';
+    return;
+  }
+  emotionAnswered = false;
+  document.getElementById('headline-text').textContent = '"' + headlines[currentHL].text.replace(/^"|"$/g,'') + '"';
+  document.getElementById('headline-num').textContent = currentHL + 1;
+  document.getElementById('em-progress').style.width = ((currentHL+1)/4*100)+'%';
+  document.getElementById('emotion-feedback').style.display='none';
+  document.getElementById('next-btn').style.display='none';
+  document.querySelectorAll('.thermo-item').forEach(t => { t.style.pointerEvents=''; t.style.background=''; t.style.borderColor=''; t.style.color=''; t.classList.remove('sel'); });
+}
+</script>
+</body>
+</html>

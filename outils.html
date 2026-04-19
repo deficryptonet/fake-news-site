@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Boîte à Outils | Détective Info</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@300;400;500;600;700&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{--noir:#0a0a0f;--rouge:#e63946;--jaune:#ffd60a;--blanc:#f8f9fa;--gris:#1a1a2e;--gris2:#16213e;--vert:#2ec4b6;--orange:#ff6b35;--font-titre:'Bebas Neue',cursive;--font-body:'Space Grotesk',sans-serif;--font-mono:'Courier Prime',monospace;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--noir);color:var(--blanc);font-family:var(--font-body);overflow-x:hidden;}
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,10,15,0.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,0.1);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:60px;}
+  .nav-logo{font-family:var(--font-titre);font-size:1.6rem;color:var(--rouge);letter-spacing:2px;text-decoration:none;}
+  .nav-logo span{color:var(--jaune);}
+  .nav-back{color:rgba(255,255,255,0.5);text-decoration:none;font-size:0.8rem;letter-spacing:1px;display:flex;align-items:center;gap:6px;transition:color .2s;}
+  .nav-back:hover{color:var(--blanc);}
+  .hero{padding:100px 2rem 4rem;max-width:900px;margin:0 auto;text-align:center;}
+  .hero h1{font-family:var(--font-titre);font-size:clamp(3rem,8vw,6rem);line-height:1;letter-spacing:2px;margin-bottom:1rem;}
+  .hero p{font-size:1.05rem;color:rgba(255,255,255,0.6);line-height:1.7;max-width:600px;margin:0 auto;}
+  .sep{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.15),transparent);margin:0 2rem;}
+  .section{padding:4rem 2rem;max-width:900px;margin:0 auto;}
+  .s-tag{font-family:var(--font-mono);font-size:0.75rem;color:var(--vert);letter-spacing:2px;text-transform:uppercase;margin-bottom:0.75rem;}
+  .s-title{font-family:var(--font-titre);font-size:2.5rem;letter-spacing:1px;margin-bottom:2rem;}
+
+  /* SITES */
+  .sites-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.25rem;}
+  .site-card{background:var(--gris2);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1.5rem;transition:all .2s;text-decoration:none;display:block;color:inherit;}
+  .site-card:hover{border-color:var(--vert);transform:translateY(-2px);}
+  .site-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.75rem;}
+  .site-name{font-family:var(--font-titre);font-size:1.3rem;letter-spacing:1px;color:var(--blanc);}
+  .site-tag{font-size:0.7rem;font-family:var(--font-mono);background:rgba(46,196,182,0.12);border:1px solid rgba(46,196,182,0.2);color:var(--vert);padding:3px 8px;border-radius:10px;white-space:nowrap;}
+  .site-url{font-family:var(--font-mono);font-size:0.72rem;color:var(--vert);margin-bottom:0.5rem;}
+  .site-desc{font-size:0.83rem;color:rgba(255,255,255,0.55);line-height:1.5;}
+
+  /* GLOSSAIRE */
+  .glossaire{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem;}
+  .glos-item{background:var(--gris2);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:1.25rem;}
+  .glos-mot{font-family:var(--font-titre);font-size:1.2rem;color:var(--jaune);letter-spacing:1px;margin-bottom:0.5rem;}
+  .glos-def{font-size:0.84rem;color:rgba(255,255,255,0.6);line-height:1.6;}
+
+  /* MEMO TÉLÉCHARGEABLE */
+  .memo-card{background:var(--gris);border:1px solid rgba(255,214,10,0.25);border-radius:16px;padding:2rem;margin:2rem 0;}
+  .memo-title{font-family:var(--font-titre);font-size:2rem;color:var(--jaune);letter-spacing:1px;margin-bottom:1.5rem;}
+  .sidiief-big{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:1rem;}
+  .sid-item{text-align:center;padding:1.25rem 0.75rem;background:rgba(255,255,255,0.04);border-radius:8px;border:1px solid rgba(255,255,255,0.06);}
+  .sid-letter{font-family:var(--font-titre);font-size:3rem;color:var(--jaune);line-height:1;}
+  .sid-mot{font-size:0.8rem;font-weight:600;color:var(--blanc);margin-top:4px;}
+  .sid-q{font-size:0.72rem;color:rgba(255,255,255,0.45);margin-top:4px;line-height:1.4;}
+
+  /* NAV BAS */
+  .bottom-nav{display:flex;justify-content:space-between;align-items:center;padding:3rem 2rem;max-width:900px;margin:0 auto;border-top:1px solid rgba(255,255,255,0.08);}
+  .btn-nav{background:transparent;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.7);padding:12px 24px;border-radius:8px;font-family:var(--font-body);font-size:0.9rem;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:all .2s;}
+  .btn-nav:hover{border-color:var(--vert);color:var(--blanc);}
+  .btn-home{background:var(--rouge);color:white;border:none;padding:12px 28px;border-radius:8px;font-family:var(--font-body);font-size:0.9rem;font-weight:600;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:all .2s;}
+  .btn-home:hover{background:#c1121f;}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-logo">Détective<span>Info</span></a>
+  <a href="index.html" class="nav-back">← Retour à l'accueil</a>
+</nav>
+
+<div class="hero">
+  <h1>BOÎTE<br>À OUTILS</h1>
+  <p>Tous les outils, sites de fact-checking et ressources pour vérifier une information comme un journaliste professionnel.</p>
+</div>
+<div class="sep"></div>
+
+<!-- SITES FACT-CHECKING -->
+<div class="section">
+  <div class="s-tag">// Sites à bookmarker</div>
+  <div class="s-title">Les sites de fact-checking fiables</div>
+  <div class="sites-grid">
+    <a href="https://factuel.afp.com" target="_blank" class="site-card">
+      <div class="site-header"><span class="site-name">AFP Factuel</span><span class="site-tag">Rumeurs</span></div>
+      <div class="site-url">factuel.afp.com</div>
+      <div class="site-desc">L'équipe de fact-checking de l'AFP vérifie les rumeurs et fake news en circulation. Cherche une info dans leur moteur de recherche.</div>
+    </a>
+    <a href="https://www.lemonde.fr/verification/" target="_blank" class="site-card">
+      <div class="site-header"><span class="site-name">Décodex</span><span class="site-tag">Sources</span></div>
+      <div class="site-url">lemonde.fr/verification</div>
+      <div class="site-desc">Le Monde évalue des centaines de sites d'information : fiable, parodique, complotiste... Tape l'URL d'un site pour voir sa note.</div>
+    </a>
+    <a href="https://www.liberation.fr/checknews/" target="_blank" class="site-card">
+      <div class="site-header"><span class="site-name">CheckNews</span><span class="site-tag">Questions</span></div>
+      <div class="site-url">liberation.fr/checknews</div>
+      <div class="site-desc">Tu peux envoyer une question aux journalistes de Libération pour qu'ils vérifient une info à ta place. Service gratuit et pédagogique.</div>
+    </a>
+    <a href="https://lens.google.com" target="_blank" class="site-card">
+      <div class="site-header"><span class="site-name">Google Lens</span><span class="site-tag">Images</span></div>
+      <div class="site-url">lens.google.com</div>
+      <div class="site-desc">Colle ou télécharge une image pour savoir d'où elle vient. Indispensable pour détecter les photos sorties de contexte.</div>
+    </a>
+    <a href="https://www.francetvinfo.fr/vrai-ou-fake/" target="_blank" class="site-card">
+      <div class="site-header"><span class="site-name">Vrai ou Fake</span><span class="site-tag">Vidéos</span></div>
+      <div class="site-url">francetvinfo.fr/vrai-ou-fake</div>
+      <div class="site-desc">France Télévisions et Radio France vérifient les informations qui circulent, avec des formats vidéo très accessibles.</div>
+    </a>
+    <a href="https://web.archive.org" target="_blank" class="site-card">
+      <div class="site-header"><span class="site-name">Wayback Machine</span><span class="site-tag">Archives</span></div>
+      <div class="site-url">web.archive.org</div>
+      <div class="site-desc">Retrouve les anciennes versions d'un site web. Utile si un site a modifié ou supprimé un article après coup.</div>
+    </a>
+  </div>
+</div>
+
+<!-- MÉMO SIDIIEF -->
+<div class="section">
+  <div class="s-tag">// La méthode</div>
+  <div class="s-title">SIDIIEF — Mémo complet</div>
+  <div class="memo-card">
+    <div class="memo-title">Mémo à garder avec toi</div>
+    <div class="sidiief-big">
+      <div class="sid-item"><div class="sid-letter">S</div><div class="sid-mot">Source</div><div class="sid-q">D'où vient cette info ?</div></div>
+      <div class="sid-item"><div class="sid-letter">I</div><div class="sid-mot">Identité</div><div class="sid-q">Qui a écrit cet article ?</div></div>
+      <div class="sid-item"><div class="sid-letter">D</div><div class="sid-mot">Date</div><div class="sid-q">Quand a-t-il été publié ?</div></div>
+      <div class="sid-item"><div class="sid-letter">I</div><div class="sid-mot">Images</div><div class="sid-q">Les photos sont-elles vraies ?</div></div>
+      <div class="sid-item"><div class="sid-letter">I</div><div class="sid-mot">Infos</div><div class="sid-q">Les faits sont-ils vérifiables ?</div></div>
+      <div class="sid-item"><div class="sid-letter">E</div><div class="sid-mot">Émotion</div><div class="sid-q">Cherche-t-on à me manipuler ?</div></div>
+      <div class="sid-item"><div class="sid-letter">F</div><div class="sid-mot">Fiabilité</div><div class="sid-q">D'autres sources confirment ?</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- GLOSSAIRE -->
+<div class="section">
+  <div class="s-tag">// Vocabulaire</div>
+  <div class="s-title">Glossaire de la désinformation</div>
+  <div class="glossaire">
+    <div class="glos-item"><div class="glos-mot">Fake news</div><div class="glos-def">Fausse information délibérément créée et diffusée pour tromper. Elle peut être entièrement inventée ou basée sur une vérité déformée.</div></div>
+    <div class="glos-item"><div class="glos-mot">Fact-checking</div><div class="glos-def">Vérification des faits par des journalistes. Le fact-checker recherche les sources originales pour confirmer ou infirmer une information.</div></div>
+    <div class="glos-item"><div class="glos-mot">Deepfake</div><div class="glos-def">Vidéo ou image manipulée par intelligence artificielle pour faire dire ou faire faire à une personne quelque chose qu'elle n'a jamais fait.</div></div>
+    <div class="glos-item"><div class="glos-mot">Biais cognitif</div><div class="glos-def">Erreur systématique de raisonnement que notre cerveau fait automatiquement. Les biais de confirmation et émotionnel sont les plus exploités.</div></div>
+    <div class="glos-item"><div class="glos-mot">Chambre d'écho</div><div class="glos-def">Environnement en ligne où on n'est exposé qu'à des infos qui confirment nos opinions. Les algorithmes des réseaux sociaux créent des chambres d'écho.</div></div>
+    <div class="glos-item"><div class="glos-mot">Clickbait</div><div class="glos-def">Titre racoleur conçu pour générer des clics, souvent exagéré ou trompeur. Exemple : "Tu ne croiras jamais ce que..."</div></div>
+    <div class="glos-item"><div class="glos-mot">Astroturfing</div><div class="glos-def">Simuler un mouvement populaire spontané qui est en réalité orchestré. Des faux comptes qui semblent être de "vraies personnes" propagent une info.</div></div>
+    <div class="glos-item"><div class="glos-mot">Désinformation</div><div class="glos-def">Diffusion intentionnelle de fausses informations. Différent de la "mésinformation" qui est une erreur involontaire sans intention de tromper.</div></div>
+    <div class="glos-item"><div class="glos-mot">Esprit critique</div><div class="glos-def">Capacité à analyser une information de façon objective, à questionner ses sources et ses intentions, sans se laisser guider uniquement par ses émotions.</div></div>
+  </div>
+</div>
+
+<div class="bottom-nav">
+  <a href="sequence5.html" class="btn-nav">← Mission 05</a>
+  <a href="index.html" class="btn-home">🏠 Accueil</a>
+</div>
+</body>
+</html>
